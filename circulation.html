@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIM Lab｜動物的循環建模工作室</title>
+<style>
+:root{--ink:#1f2a24;--muted:#5d6b63;--line:#d9ddd5;--bg:#f6f4ee;--card:#fff;--accent:#1f5c45;--accent2:#e9f2ec;--warn:#9a5a12;--sens:#2b7bd6;--motor:#e07b1a;--cent:#8a4fc4}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
+a{color:var(--accent)}
+header.top{padding-top:calc(10px + env(safe-area-inset-top))!important;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.brand{font-weight:800;letter-spacing:.5px}.brand small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+main{max-width:1100px;margin:0 auto;padding:22px 18px 60px}
+.eyebrow{font-size:12px;letter-spacing:2px;color:var(--muted);font-weight:700}
+h1{font-size:30px;margin:4px 0 4px}
+h2{font-size:22px;margin:0 0 6px}
+h3{font-size:17px;margin:14px 0 6px}
+.lead{color:var(--muted);margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0}
+.note{font-size:13px;color:var(--muted)}
+.notice{background:#fff8ea;border:1px solid #efd9a8;border-radius:10px;padding:10px 12px;font-size:13.5px;color:#6b4a12}
+.safety{background:#fdeeee;border:1px solid #f0c4c4;border-radius:10px;padding:8px 12px;font-size:13.5px;color:#8a2a2a;margin:8px 0}
+label.f{display:block;font-weight:600;margin:10px 0 4px}
+input[type=text],input[type=number],textarea,select{font:inherit;border:1px solid #c9cfc6;border-radius:8px;padding:7px 9px;background:#fff;color:var(--ink)}
+input[type=text],textarea{width:100%}
+textarea{min-height:84px;resize:vertical}
+button{font:inherit;border:1px solid #bfc8bf;background:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+button:hover{background:#f1f4f0}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+button.primary:hover{background:#174a37}
+button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:720px){.grid5{grid-template-columns:1fr 1fr}h1{font-size:24px}}
+.idbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.idtag{font-weight:800;font-size:17px}
+.saved{font-size:12.5px;color:var(--accent);background:var(--accent2);border-radius:20px;padding:2px 10px}
+nav.stages{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px;position:sticky;top:58px;background:var(--bg);z-index:10}
+nav.stages button{white-space:nowrap;border-radius:20px;font-size:14px;padding:5px 12px}
+.stagehead .eyebrow{margin-bottom:2px}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.toolbar .sep{width:1px;background:var(--line);margin:0 4px}
+.tool-path{border-left-width:5px!important;border-left-style:solid!important}
+.e4grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+@media(max-width:640px){.e4grid{grid-template-columns:1fr 1fr}}
+.homelink{display:inline-block;margin:0 0 6px;font-size:14px;text-decoration:none;font-weight:600}
+.canvaswrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;touch-action:none}
+canvas.model,canvas.view{display:block;width:100%;height:auto}
+canvas.model{cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.scentabs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}
+.scentabs button[data-s]{border-radius:10px 10px 0 0;border-bottom-width:3px;padding:7px 14px;font-weight:600}
+.scentabs button[data-s].on{background:var(--accent);border-color:var(--accent);color:#fff}
+.scentabs .focusbtn{margin-left:auto}
+.task{background:#f3f7f4;border-left:4px solid var(--accent);padding:8px 12px;border-radius:0 8px 8px 0;margin:6px 0}
+.labelin{max-width:320px}
+.exp{border-top:1px dashed var(--line);margin-top:6px;padding-top:6px}.exptitle{font-size:14px;font-weight:700;color:var(--muted)}
+.cmpcard summary{cursor:pointer}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tablewrap table.data{min-width:540px}
+body.noscroll{overflow:hidden}
+.edwrap.focus{position:fixed;inset:0;z-index:60;background:#fff;overflow:auto;padding:8px 10px calc(10px + env(safe-area-inset-bottom))}
+.edwrap.focus .task{display:none}
+.edwrap.focus .canvaswrap{max-width:calc((100vh - 200px) * 4 / 3);margin:0 auto}
+button,select,input{min-height:36px}
+input[type=checkbox],input[type=radio]{min-height:0;width:18px;height:18px;vertical-align:-3px}
+input[type=range]{min-height:0}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0;font-size:14px}
+.ctrl input[type=range]{width:160px}
+.legend{font-size:13.5px;color:var(--muted)}
+.legend b.s{color:var(--sens)}.legend b.m{color:var(--motor)}.legend b.c{color:var(--cent)}
+.msg{font-size:13.5px;color:var(--warn)}
+.step{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0;background:#fcfdfb}
+.step h3{margin-top:0}
+.status{display:inline-block;font-size:12px;border-radius:20px;padding:1px 9px;background:#eee;color:#666}
+.status.done{background:var(--accent2);color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border-radius:18px;padding:3px 11px;font-size:14px}
+.seq{min-height:38px;border:1px dashed #c9cfc6;border-radius:10px;padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;background:#fff;margin:6px 0}
+.seq span.it{background:#eef3ff;border:1px solid #c9d7f5;border-radius:14px;padding:1px 9px;font-size:14px}
+.seq span.ar{color:#888}
+table.data{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+table.data th,table.data td{border:1px solid var(--line);padding:5px 6px;text-align:center}
+table.data th{background:#f2f4ef}
+table.data input,table.data select{width:100%;padding:4px 6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+.pill{display:inline-block;background:#eef2ee;border-radius:20px;padding:2px 10px;font-size:13px;margin:2px}
+.pager{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px;flex-wrap:wrap}
+details.concept summary{cursor:pointer;font-weight:700}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media(max-width:720px){.flow{grid-template-columns:1fr}}
+.flow div{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fcfdfb}
+.flow b{display:block;color:var(--accent)}
+.guide{background:var(--accent2);border:1px solid #cfe2d6}
+.vlist label{display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px dashed #e4e6e0}
+.miniwrap{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+canvas.sim{display:block;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:10px;max-width:100%}
+.big{font-size:20px;padding:10px 22px}
+.fixstage{position:relative}
+.hidden{display:none!important}
+footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px}
+@media(max-width:900px){.labelin{max-width:none;flex:1 1 220px}}
+@media(max-width:640px){
+ header.top{position:static;padding:8px 12px}
+ nav.stages{top:0}
+ main{padding:12px 10px 50px}
+ .card{padding:12px;border-radius:12px}
+ .step{padding:10px}
+ h1{font-size:24px}h2{font-size:19px}
+ .toolbar{gap:5px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:thin}
+ .toolbar>*{flex:0 0 auto}
+ .toolbar .labelin{flex:0 0 260px}
+ .task{font-size:14px;padding:6px 10px}
+ .toolbar button,.ctrl button,.scentabs button{font-size:13.5px;padding:5px 9px}
+ .scentabs button[data-s]{flex:1 1 45%}
+ .scentabs .focusbtn{margin-left:0;flex:1 1 100%}
+ .ctrl{font-size:13px;gap:6px}
+ .ctrl input[type=range]{width:100%;order:9}
+ .legend{font-size:12.5px}
+ .pager .note{display:none}
+ .idtag{font-size:15px}
+ .grid5{grid-template-columns:1fr 1fr}
+ .edwrap.focus .canvaswrap{max-width:none}
+}
+@media(max-width:640px) and (orientation:landscape){.edwrap.focus .canvaswrap{max-width:calc((100vh - 60px) * 4 / 3)}.edwrap.focus .toolbar{flex-wrap:nowrap;overflow-x:auto}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">SIM Lab<small>科學探究建模實驗室</small></div>
+  <div class="note">MODULE 03 · 動物的循環</div>
+</header>
+<main id="app"></main>
+<footer>SIM Lab · 動物的循環模組（依康軒國中自然 7 上第 3 章 3.3 改編）· 作答僅保存在此瀏覽器</footer>
+<script>
+'use strict';
+/* =========================================================
+   共用設定
+   ========================================================= */
+const W = 800, H = 600, FRAMES = 120, FPS = 24;
+const SVG_FONT = 'Noto Sans TC, Microsoft JhengHei, PingFang TC, sans-serif';
+const STAGES = [
+  { id: 'pre', tab: '現象與前測' },
+  { id: 'm1', tab: 'M1 個人初始模型' },
+  { id: 'e1', tab: 'E1' }, { id: 'e2', tab: 'E2' }, { id: 'e3', tab: 'E3' }, { id: 'e4', tab: 'E4' },
+  { id: 'm2', tab: 'M2 小組修正模型' },
+  { id: 'review', tab: '小組互評' },
+  { id: 'm3', tab: 'M3 個人最終模型' },
+  { id: 'post', tab: '後測與反思' },
+  { id: 'history', tab: '歷程比較' }
+];
+/* ================= 模組共用小工具 ================= */
+const svgImg = (svg, alt, maxw) => `<div style="max-width:${maxw ? maxw + 'px' : '100%'}"><img src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}" alt="${alt}" style="display:block;width:100%;height:auto"></div>`;
+/* 簡易紀錄表 */
+function recordTable(container, d, key, cols, rows, opts = {}) {
+  if (!d[key]) d[key] = {};
+  const el = h(`<div class="tablewrap"><table class="data"><thead><tr><th>${opts.corner || ''}</th>${cols.map(c => `<th>${c.label}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr><th>${r}</th>${cols.map((c, ci) => `<td>${c.options ? `<select data-k="${ri}_${ci}">${['', ...c.options].map(o => `<option>${o}</option>`).join('')}</select>` : `<input type="${c.type || 'text'}" data-k="${ri}_${ci}" placeholder="${c.ph || ''}"${c.type === 'number' ? ' inputmode="numeric" min="0"' : ''}>`}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`);
+  container.appendChild(el);
+  el.querySelectorAll('[data-k]').forEach(i => { i.value = d[key][i.dataset.k] || ''; i.addEventListener(i.tagName === 'SELECT' ? 'change' : 'input', () => { d[key][i.dataset.k] = i.value; save(); onDataChange(); }); });
+}
+const tableReport = (d, key, cols, rows, corner = '') => d[key] && Object.values(d[key]).some(Boolean) ? `<table><tr><th>${corner}</th>${cols.map(c => `<th>${c.label}</th>`).join('')}</tr>${rows.map((r, ri) => `<tr><td>${r}</td>${cols.map((c, ci) => `<td>${esc(d[key][ri + '_' + ci] || '')}</td>`).join('')}</tr>`).join('')}</table>` : '';
+const hasTable = (d, key) => !!(d[key] && Object.values(d[key]).some(Boolean));
+
+
+/* 線稿塗色工具：opt = { img, w, h, colors: { key: [名稱, 色碼] }, aria, hint } */
+function drawPaint(ctx, strokes, opt) {
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, opt.w, opt.h);
+  ctx.save(); ctx.globalAlpha = 0.55; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  for (const s of strokes || []) { ctx.strokeStyle = (opt.colors[s.c] || Object.values(opt.colors)[0])[1]; ctx.lineWidth = s.w || 14; ctx.beginPath(); s.pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); if (s.pts.length === 1) ctx.lineTo(s.pts[0][0] + 0.1, s.pts[0][1]); ctx.stroke(); }
+  ctx.restore();
+  if (opt.img.complete && opt.img.naturalWidth) { ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(opt.img, 0, 0, opt.w, opt.h); ctx.restore(); }
+}
+function paintImage(strokes, opt) { const c = document.createElement('canvas'); c.width = opt.w; c.height = opt.h; drawPaint(c.getContext('2d'), strokes, opt); return c.toDataURL('image/png'); }
+function paintTool(container, d, key, clearLabel, opt) {
+  if (!Array.isArray(d[key])) d[key] = [];
+  const first = Object.keys(opt.colors)[0];
+  const el = h(`<div style="margin:6px 0 10px">
+    <div class="row">${Object.entries(opt.colors).map(([k, [n, c]]) => `<button data-c="${k}" style="border-left:6px solid ${c}">${n}</button>`).join('')}<button data-c="eraser">橡皮擦</button><button data-a="clr">${clearLabel}</button></div>
+    <div style="max-width:${opt.w}px;margin-top:8px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff"><canvas width="${opt.w}" height="${opt.h}" style="display:block;width:100%;height:auto;touch-action:none;cursor:crosshair" aria-label="${opt.aria || '線稿，可塗色'}"></canvas></div>
+    <p class="note" data-r="n"></p></div>`);
+  container.appendChild(el);
+  const cv = el.querySelector('canvas'), ctx = cv.getContext('2d'); let col = first, cur = null;
+  const draw = () => { drawPaint(ctx, d[key], opt); el.querySelector('[data-r="n"]').textContent = `${opt.hint || '選擇顏色，在線稿上自由塗繪；橡皮擦點選可刪除整筆。'}紀錄 ${d[key].length} 筆。`; };
+  opt.img.addEventListener('load', draw);
+  const setC = c => { col = c; el.querySelectorAll('[data-c]').forEach(b => b.classList.toggle('on', b.dataset.c === c)); };
+  el.querySelectorAll('[data-c]').forEach(b => b.onclick = () => setC(b.dataset.c)); setC(first);
+  let armed = 0; const clr = el.querySelector('[data-a="clr"]');
+  clr.onclick = () => { if (Date.now() - armed < 3000) { d[key] = []; armed = 0; clr.textContent = clearLabel; draw(); save(); onDataChange(); } else { armed = Date.now(); clr.textContent = '再按一次確認清除'; setTimeout(() => clr.textContent = clearLabel, 3000); } };
+  const pos = e => { const r = cv.getBoundingClientRect(); return [Math.round((e.clientX - r.left) * opt.w / r.width), Math.round((e.clientY - r.top) * opt.h / r.height)]; };
+  cv.addEventListener('pointerdown', e => {
+    e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch (_) {} const p = pos(e);
+    if (col === 'eraser') { const tol = e.pointerType === 'touch' ? 20 : 12; for (let i = d[key].length - 1; i >= 0; i--) { if (d[key][i].pts.some(q => Math.hypot(q[0] - p[0], q[1] - p[1]) < tol + 7)) { d[key].splice(i, 1); draw(); save(); onDataChange(); break; } } return; }
+    cur = { c: col, w: 14, pts: [p] }; d[key].push(cur); draw();
+  });
+  cv.addEventListener('pointermove', e => { if (!cur) return; e.preventDefault(); const p = pos(e), l = cur.pts[cur.pts.length - 1]; if (Math.hypot(p[0] - l[0], p[1] - l[1]) > 2) { cur.pts.push(p); draw(); } });
+  const end = () => { if (cur) { cur = null; save(); onDataChange(); } };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('touchmove', e => { if (cur) e.preventDefault(); }, { passive: false });
+  draw();
+}
+
+/* 預測曲線：學生先徒手畫預測（橘色虛線），再與表格資料（一或多條）疊圖比較
+   opt = { xLabels, yMin, yMax, yStep, yLabel, series: [{ col, label, color }], title, hint } */
+function curveTool(container, d, key, dataKey, opt) {
+  if (!Array.isArray(d[key])) d[key] = [];
+  const Wc = 560, Hc = 300, L = 56, R = 20, T = 30, B = 56, n = opt.xLabels.length, y0 = opt.yMin || 0;
+  const el = h(`<div style="margin:8px 0"><div style="max-width:${Wc}px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff"><canvas width="${Wc}" height="${Hc}" style="display:block;width:100%;height:auto;touch-action:none;cursor:crosshair" aria-label="${opt.title}"></canvas></div>
+    <div class="row" style="margin-top:6px"><button data-a="clr">清除預測曲線</button><span class="note">${opt.hint}</span></div></div>`);
+  container.appendChild(el);
+  const cv = el.querySelector('canvas'), ctx = cv.getContext('2d'); let cur = null;
+  const xOf = i => L + i * (Wc - L - R) / (n - 1), yOf = v => Hc - B - (v - y0) / (opt.yMax - y0) * (Hc - T - B);
+  function draw() {
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, Wc, Hc); ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1; ctx.font = '12px sans-serif'; ctx.fillStyle = '#555';
+    for (let v = y0; v <= opt.yMax + 1e-9; v += opt.yStep) { const y = yOf(v); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(Wc - R, y); ctx.stroke(); ctx.textAlign = 'right'; ctx.fillText(Math.round(v * 10) / 10, L - 6, y + 4); }
+    ctx.textAlign = 'center'; opt.xLabels.forEach((s, i) => ctx.fillText(s, xOf(i), Hc - B + 18));
+    ctx.save(); ctx.translate(14, (Hc - B + T) / 2); ctx.rotate(-Math.PI / 2); ctx.fillText(opt.yLabel, 0, 0); ctx.restore();
+    ctx.strokeStyle = '#999'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(L, T); ctx.lineTo(L, Hc - B); ctx.lineTo(Wc - R, Hc - B); ctx.stroke();
+    if (d[key].length > 1) { ctx.strokeStyle = '#e0601a'; ctx.lineWidth = 3; ctx.setLineDash([8, 6]); ctx.beginPath(); d[key].forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.setLineDash([]); }
+    const tb = d[dataKey] || {};
+    opt.series.forEach(sr => {
+      const pts = opt.xLabels.map((_, i) => parseFloat(tb[i + '_' + sr.col])).map((v, i) => isNaN(v) ? null : [xOf(i), yOf(Math.max(y0, Math.min(v, opt.yMax)))]);
+      ctx.strokeStyle = sr.color; ctx.fillStyle = sr.color; ctx.lineWidth = 2.5; ctx.beginPath(); let st = false; pts.forEach(p => { if (!p) return; if (!st) { ctx.moveTo(...p); st = true; } else ctx.lineTo(...p); }); ctx.stroke();
+      pts.forEach(p => { if (p) { ctx.beginPath(); ctx.arc(p[0], p[1], 5, 0, 7); ctx.fill(); } });
+    });
+    ctx.textAlign = 'left'; ctx.font = 'bold 12px sans-serif'; let lx = L + 6;
+    ctx.fillStyle = '#e0601a'; ctx.fillText('- - 我的預測', lx, 16); lx += 92;
+    opt.series.forEach(sr => { ctx.fillStyle = sr.color; ctx.fillText('●— ' + sr.label, lx, 16); lx += ctx.measureText('●— ' + sr.label).width + 18; });
+  }
+  const pos = e => { const r = cv.getBoundingClientRect(); return [Math.round((e.clientX - r.left) * Wc / r.width), Math.round((e.clientY - r.top) * Hc / r.height)]; };
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch (_) {} d[key] = [pos(e)]; cur = d[key]; draw(); });
+  cv.addEventListener('pointermove', e => { if (!cur) return; e.preventDefault(); const p = pos(e), l = cur[cur.length - 1]; if (Math.abs(p[0] - l[0]) + Math.abs(p[1] - l[1]) > 3) { cur.push(p); draw(); } });
+  const end = () => { if (cur) { cur = null; save(); onDataChange(); } }; cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('touchmove', e => { if (cur) e.preventDefault(); }, { passive: false });
+  el.querySelector('[data-a="clr"]').onclick = () => { d[key] = []; draw(); save(); onDataChange(); };
+  const onAny = () => { if (!document.body.contains(el)) { document.removeEventListener('input', onAny); document.removeEventListener('curveupdate', onAny); return; } draw(); };
+  if (container.isConnected) { document.addEventListener('input', onAny); document.addEventListener('curveupdate', onAny); }
+  draw();
+  return { image: () => { draw(); return cv.toDataURL('image/png'); } };
+}
+function curveImage(d, key, dataKey, opt) { const tmp = document.createElement('div'); tmp.style.cssText = 'position:absolute;left:-9999px'; document.body.appendChild(tmp); const c = curveTool(tmp, d, key, dataKey, opt); const u = c.image(); tmp.remove(); return u; }
+
+/* =========================================================
+   模組設定：動物的循環（康軒 7 上 第 3 章 3.3 人體內物質的運輸）
+   ========================================================= */
+const C_LBL = (x1, y1, x2, y2, tx, ty, t, anchor = 'start') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9aa39b" stroke-width="1.2"/><text x="${tx}" y="${ty}" text-anchor="${anchor}">${t}</text>`;
+const cellBlob = (cx, cy, n = 6, r = 9, seed = 1) => Array.from({ length: n }, (_, i) => { const a = i * 2.4 + seed, d = 4 + (i * 7 + seed * 3) % 16; const x = cx + Math.cos(a) * d * 1.4, y = cy + Math.sin(a) * d; return `<g><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#f7e3d6" stroke="#cf9f86" stroke-width="1.3"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" fill="#a8664d"/></g>`; }).join('');
+
+/* 情境 A：全身血液循環（畫出血管、未畫血流方向；紅＝充氧血、藍＝缺氧血） */
+const CIRC_BODY_SVG = (() => {
+  const RED = '#e06666', RED_D = '#a83232', BLUE = '#6f93df', BLUE_D = '#2f4f9e';
+  const tube = (d, c, cd, w = 14) => `<path d="${d}" fill="none" stroke="${cd}" stroke-width="${w + 4}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  /* 微血管網：左半偏紅、右半偏藍，表示血液在此改變 */
+  const capBed = (x, y, w, hgt, redSide = 'right') => {
+    const lines = [];
+    for (let i = 0; i < 6; i++) { const yy = y + 6 + i * (hgt - 12) / 5; lines.push(`<path d="M${x} ${yy} q${w / 6} ${i % 2 ? -8 : 8} ${w / 3} 0 t${w / 3} 0 t${w / 3} 0" fill="none" stroke="url(#cap-${redSide})" stroke-width="3"/>`); }
+    for (let i = 1; i < 6; i++) { const xx = x + i * w / 6; lines.push(`<path d="M${xx} ${y + 4} q${i % 2 ? 6 : -6} ${hgt / 2} 0 ${hgt - 8}" fill="none" stroke="url(#cap-${redSide})" stroke-width="2.2"/>`); }
+    return `<rect x="${x - 6}" y="${y - 4}" width="${w + 12}" height="${hgt + 8}" rx="14" fill="#fff6f2" stroke="#d9b9b0" stroke-width="1.5"/>${lines.join('')}`;
+  };
+  const lbl = (x1, y1, x2, y2, tx, ty, t, a = 'start', b = false) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#8f9890" stroke-width="1.2"/><text x="${tx}" y="${ty}" text-anchor="${a}"${b ? ' font-weight="700"' : ''}>${t}</text>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+<defs>
+<linearGradient id="cap-right" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="${RED_D}"/><stop offset="1" stop-color="${BLUE_D}"/></linearGradient>
+<linearGradient id="cap-left" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${RED_D}"/><stop offset="1" stop-color="${BLUE_D}"/></linearGradient>
+<linearGradient id="cap-lungL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${BLUE_D}"/><stop offset="1" stop-color="${RED_D}"/></linearGradient>
+</defs>
+<rect width="800" height="600" fill="#fbfaf6"/>
+<g fill="#f5eee5" stroke="#e6d8c6" stroke-width="2.5" stroke-linejoin="round" opacity=".9">
+<circle cx="400" cy="62" r="50"/><path d="M290 128 Q400 112 510 128 L540 170 L600 240 L578 258 L522 205 L520 470 Q400 486 280 470 L278 205 L222 258 L200 240 L260 170 Z"/><path d="M290 466 L318 596 L382 596 L394 486 L406 486 L418 596 L482 596 L510 466 Z"/>
+</g>
+${capBed(300, 36, 200, 56, 'right')}
+${capBed(300, 494, 200, 56, 'right')}
+<g fill="#f7d3d8" stroke="#c97d8a" stroke-width="2.5"><path d="M218 172 Q176 188 170 252 Q168 318 222 322 Q256 318 258 280 L258 196 Q254 170 218 172 Z"/><path d="M582 172 Q624 188 630 252 Q632 318 578 322 Q544 318 542 280 L542 196 Q546 170 582 172 Z"/></g>
+<g>${[[180, 206], [552, 206]].map(([x, y]) => Array.from({ length: 5 }, (_, i) => `<path d="M${x} ${y + i * 18} q12 -7 24 0 t24 0 t24 0" fill="none" stroke="url(#cap-lungL)" stroke-width="2.4"/>`).join('')).join('')}</g>
+<g transform="translate(400 330)">
+<path d="M-82 -60 Q-88 -76 -66 -80 L66 -80 Q88 -76 82 -60 L78 44 Q46 100 0 114 Q-46 100 -78 44 Z" fill="#eab0b0" stroke="#9e4448" stroke-width="3"/>
+<rect x="-74" y="-74" width="48" height="48" rx="11" fill="#c9d6f4" stroke="#9e4448" stroke-width="2.5"/>
+<rect x="26" y="-74" width="48" height="48" rx="11" fill="#f6c9c9" stroke="#9e4448" stroke-width="2.5"/>
+<path d="M-70 -20 L-10 -20 L-10 66 Q-34 70 -56 48 Q-70 28 -70 -20 Z" fill="#c9d6f4" stroke="#9e4448" stroke-width="2.5"/>
+<path d="M10 -20 L70 -20 Q70 32 54 56 Q32 92 10 96 Z" fill="#f6c9c9" stroke="#9e4448" stroke-width="6"/>
+<path d="M-57 -28 l7 9 l7 -9 M43 -28 l7 9 l7 -9" stroke="#7a2e32" stroke-width="2" fill="none"/>
+</g>
+${tube('M256 290 Q290 252 320 250 L436 250 Q448 250 448 258', RED, RED_D, 11)}${tube('M544 292 Q506 292 490 282 Q478 276 474 276', RED, RED_D, 11)}
+${tube('M300 80 Q290 100 296 112 L322 112 Q340 112 340 132 L340 262', BLUE, BLUE_D, 15)}
+${tube('M294 520 Q262 520 262 490 L262 440 Q262 420 280 420 L310 420 Q326 420 326 404 L326 330 Q326 300 338 296', BLUE, BLUE_D, 15)}
+${tube('M386 324 L386 214 Q386 200 370 200 L262 200 Q250 200 250 212', BLUE, BLUE_D, 12)}${tube('M386 214 Q386 200 402 200 L536 200 Q548 200 548 212', BLUE, BLUE_D, 12)}
+${tube('M416 324 L416 170 Q416 140 446 140 L540 140 Q560 140 560 160 L560 440 Q560 470 530 478 L506 500', RED, RED_D, 15)}
+${tube('M470 140 Q500 140 500 112 L500 82', RED, RED_D, 9)}
+<g font-family="${SVG_FONT}" font-size="14" fill="#3f4844">
+${lbl(504, 60, 520, 52, 524, 50, '身體上部各組織的微血管')}${lbl(504, 524, 520, 534, 524, 540, '身體下部各組織的微血管（如小腸、腿）')}
+${lbl(178, 300, 150, 320, 70, 336, '右肺的微血管')}${lbl(622, 300, 648, 320, 640, 336, '左肺的微血管')}
+${lbl(340, 150, 300, 146, 228, 150, '上大靜脈')}${lbl(262, 456, 236, 462, 166, 468, '下大靜脈')}
+${lbl(560, 380, 590, 392, 594, 398, '主動脈')}${lbl(500, 104, 540, 108, 544, 112, '小動脈')}${lbl(300, 82, 266, 108, 206, 116, '小靜脈')}
+${lbl(250, 212, 160, 212, 104, 217, '肺動脈')}${lbl(548, 212, 640, 212, 646, 217, '肺動脈')}
+${lbl(290, 256, 262, 360, 196, 376, '肺靜脈')}${lbl(510, 286, 578, 352, 580, 370, '肺靜脈')}
+</g>
+<g font-family="${SVG_FONT}" font-size="13" font-weight="700" fill="#5a2a2c" text-anchor="middle"><text x="350" y="284" font-size="12">右心房</text><text x="450" y="284" font-size="12">左心房</text><text x="357" y="360">右心室</text><text x="446" y="360">左心室</text></g>
+<g font-family="${SVG_FONT}" font-size="13" fill="#3f4844"><rect x="600" y="436" width="18" height="10" rx="3" fill="${RED}" stroke="${RED_D}"/><text x="624" y="446">充氧血較多的血管</text><rect x="600" y="456" width="18" height="10" rx="3" fill="${BLUE}" stroke="${BLUE_D}"/><text x="624" y="466">缺氧血較多的血管</text><text x="600" y="486" font-size="12" fill="#6b746e">左、右以圖中人體本身為準</text></g>
+<text x="16" y="590" font-family="${SVG_FONT}" font-size="13" fill="#8a918b">示意圖｜仿課本血液循環圖，未標示血流方向，請沿著血管畫出你的想法</text>
+</svg>`;
+})();
+
+/* 情境 B：組織中的微血管（未標示血流方向） */
+const CIRC_TISSUE_SVG = (() => {
+  const cells = [];
+  for (let y = 0; y < 640; y += 58) for (let x = (y / 58) % 2 ? 0 : 30; x < 840; x += 62) {
+    if ((y > 60 && y < 160) || (y > 430 && y < 540)) continue;
+    cells.push(`<path d="M${x} ${y} l26 -6 l28 8 l4 26 l-20 22 l-30 -4 l-12 -24 Z" fill="#f7e8de" stroke="#d6b3a0" stroke-width="1.4"/><circle cx="${x + 22}" cy="${y + 20}" r="5" fill="#b9775c"/>`);
+  }
+  const caps = [140, 300, 460, 620].map((x, i) => `<path d="M${x} 130 C${x + 30} 220 ${x - 30} 300 ${x + 10} 380 S${x + 40} 440 ${x + 20} 470" fill="none" stroke="#c0545c" stroke-width="14" stroke-linecap="round"/><path d="M${x} 130 C${x + 30} 220 ${x - 30} 300 ${x + 10} 380 S${x + 40} 440 ${x + 20} 470" fill="none" stroke="#f3b9bd" stroke-width="9" stroke-linecap="round"/>`).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+<rect width="800" height="600" fill="#fbf3ec"/>${cells.join('')}
+<rect x="-10" y="88" width="820" height="48" rx="20" fill="#f3b9bd" stroke="#b03a44" stroke-width="7"/>
+<rect x="-10" y="462" width="820" height="56" rx="24" fill="#f6c9cc" stroke="#b56a72" stroke-width="3.5"/>
+${caps}
+<g font-family="${SVG_FONT}" font-size="16" fill="#4f4a46" font-weight="700"><rect x="14" y="60" width="74" height="24" rx="6" fill="#fff" opacity=".85"/><text x="20" y="78">血管甲</text><rect x="14" y="526" width="74" height="24" rx="6" fill="#fff" opacity=".85"/><text x="20" y="544">血管乙</text></g>
+<g font-family="${SVG_FONT}" font-size="15" fill="#5f6660"><rect x="660" y="262" width="80" height="22" rx="6" fill="#fff" opacity=".85"/><text x="666" y="279">組織細胞</text><rect x="360" y="290" width="64" height="22" rx="6" fill="#fff" opacity=".85"/><text x="366" y="307">微血管</text></g>
+<text x="16" y="590" font-family="${SVG_FONT}" font-size="13" fill="#8a918b">示意圖｜未標示血流方向與交換的物質</text>
+</svg>`;
+})();
+
+/* E1：豬心構造示意（腔室以甲乙丙丁、開孔以 1～5 表示） */
+const PIG_HEART_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 380" width="420" height="380" font-family="${SVG_FONT}">
+<rect width="420" height="380" fill="#fbfaf6"/>
+<g fill="#e9c3c3" stroke="#8d3a3e" stroke-width="3">
+<path d="M88 40 L88 120" stroke-width="22" stroke="#c98a8e"/><path d="M60 300 Q60 250 96 230" fill="none" stroke-width="22" stroke="#c98a8e"/>
+<path d="M190 180 L190 40" stroke-width="24" stroke="#c98a8e"/><path d="M236 190 L236 70 Q236 26 290 26 L330 26" fill="none" stroke-width="26" stroke="#c98a8e"/>
+<path d="M330 150 L392 136 M330 176 L392 190" stroke-width="16" stroke="#c98a8e"/>
+</g>
+<path d="M70 120 Q60 104 84 100 L330 100 Q352 104 344 122 L338 250 Q300 330 210 356 Q120 330 80 250 Z" fill="#e3a2a6" stroke="#8d3a3e" stroke-width="3"/>
+<rect x="84" y="112" width="104" height="70" rx="14" fill="#f8dede" stroke="#8d3a3e" stroke-width="2.5"/>
+<rect x="226" y="112" width="104" height="70" rx="14" fill="#f8dede" stroke="#8d3a3e" stroke-width="2.5"/>
+<path d="M88 196 L188 196 L188 320 Q140 316 110 284 Q88 254 88 196 Z" fill="#f8dede" stroke="#8d3a3e" stroke-width="2.5"/>
+<path d="M226 196 L328 196 Q326 262 296 300 Q262 336 226 344 Z" fill="#f8dede" stroke="#8d3a3e" stroke-width="7"/>
+<g font-size="22" font-weight="700" fill="#5a2a2c" text-anchor="middle"><text x="136" y="155">甲</text><text x="278" y="155">乙</text><text x="138" y="262">丙</text><text x="272" y="262">丁</text></g>
+<g font-size="15" font-weight="700" fill="#fff"><circle cx="88" cy="30" r="13" fill="#1f5c45"/><text x="83" y="35">1</text><circle cx="46" cy="312" r="13" fill="#1f5c45"/><text x="41" y="317">2</text><circle cx="190" cy="30" r="13" fill="#1f5c45"/><text x="185" y="35">3</text><circle cx="346" cy="26" r="13" fill="#1f5c45"/><text x="341" y="31">4</text><circle cx="404" cy="162" r="13" fill="#1f5c45"/><text x="399" y="167">5</text></g>
+<text x="10" y="372" font-size="12" fill="#8a918b">示意圖｜腔室以甲乙丙丁、開孔以 1～5 表示（面向觀察者）</text>
+</svg>`;
+
+/* E2：點按計數器（15 秒 × 4） */
+function beatCounter(container, d) {
+  d.hr = d.hr || {};
+  const CELLS = [['0_0', '運動前・心搏（聽診器）'], ['0_1', '運動前・脈搏（手腕）'], ['1_0', '運動後・心搏（聽診器）'], ['1_1', '運動後・脈搏（手腕）']];
+  const el = h(`<div class="card" style="background:#fcfdfb"><h3 style="margin-top:0">點按計數器（輔助工具）</h3>
+    <p class="note">選擇要記錄的項目，按「開始 15 秒」後，每聽到一次「撲通」或摸到一次脈搏就點一下大按鈕（或按空白鍵）。15 秒的次數 × 4 會自動填入下方表格的「我的」欄位。</p>
+    <div class="row"><select data-r="cell">${CELLS.map(([k, n]) => `<option value="${k}">${n}</option>`).join('')}</select><button class="primary" data-a="go">開始 15 秒</button></div>
+    <button class="big" data-a="tap" style="width:100%;margin-top:10px;min-height:90px;font-size:22px" disabled>撲通！（點一下）</button>
+    <p data-r="out" style="font-weight:700;text-align:center;margin:8px 0"></p></div>`);
+  container.appendChild(el);
+  const tap = el.querySelector('[data-a="tap"]'), out = el.querySelector('[data-r="out"]'); let n = 0, timer = 0, left = 0;
+  el.querySelector('[data-a="go"]').onclick = () => {
+    clearInterval(timer); n = 0; left = 15; tap.disabled = false; out.textContent = `計時中：${left} 秒・已點 0 下`;
+    timer = setInterval(() => { left--; if (left > 0) { out.textContent = `計時中：${left} 秒・已點 ${n} 下`; return; }
+      clearInterval(timer); tap.disabled = true; const cell = el.querySelector('[data-r="cell"]').value; d.hr[cell] = String(n * 4);
+      out.textContent = `15 秒共 ${n} 下 → 每分鐘約 ${n * 4} 次（已填入表格）`; save(); onDataChange();
+      const inp = container.querySelector(`[data-k="${cell}"]`); if (inp) inp.value = d.hr[cell]; }, 1000);
+  };
+  const hit = () => { if (tap.disabled) return; n++; out.textContent = `計時中：${left} 秒・已點 ${n} 下`; };
+  tap.addEventListener('pointerdown', e => { e.preventDefault(); hit(); });
+  window.addEventListener('keydown', function kh(e) { if (!document.body.contains(el)) { window.removeEventListener('keydown', kh); clearInterval(timer); return; } if (e.code === 'Space' && !tap.disabled && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) { e.preventDefault(); hit(); } });
+}
+const E2C_COLS = [{ label: '我的心搏（次／分）', type: 'number' }, { label: '我的脈搏（次／分）', type: 'number' }, { label: '夥伴心搏（次／分）', type: 'number' }, { label: '夥伴脈搏（次／分）', type: 'number' }], E2C_ROWS = ['運動前', '運動後'];
+
+/* E3：魚尾鰭血流模擬 */
+function finSim(container, d) {
+  const el = h(`<div class="card" style="background:#fcfdfb"><h3 style="margin-top:0">魚尾鰭血流模擬（顯微鏡觀察的輔助）</h3>
+    <p class="note">這是示意動畫，不是真實影像；請以實際顯微鏡觀察為主。比較 A、B、C 三種血管中血球的流動方向、速度與管徑。</p>
+    <div style="max-width:560px"><canvas width="560" height="320" style="display:block;width:100%;height:auto;background:#fdf6ee;border:1px solid var(--line);border-radius:10px" aria-label="魚尾鰭血管中血球流動的示意動畫"></canvas></div>
+    <div class="ctrl"><button data-a="play">暫停</button><label>速度 <select data-r="sp"><option value="0.4">慢動作</option><option value="1" selected>正常</option></select></label></div></div>`);
+  container.appendChild(el);
+  const cv = el.querySelector('canvas'), ctx = cv.getContext('2d'); let playing = true, t = 0, last = performance.now(), raf = 0;
+  const A = [[0, 70], [560, 70]], B = [[560, 250], [0, 250]];
+  const caps = [90, 210, 330, 450].map(x => [[x, 78], [x + 18, 130], [x - 10, 190], [x + 8, 242]]);
+  const plen = pts => pts.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]), 0);
+  const at = (pts, dd) => { for (let i = 1; i < pts.length; i++) { const L = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); if (dd <= L || i === pts.length - 1) { const r = Math.min(1, dd / L); return [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * r, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * r]; } dd -= L; } };
+  function tube(pts, w, wall, fill) { ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = wall; ctx.lineWidth = w + 6; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(...p) : ctx.moveTo(...p)); ctx.stroke(); ctx.strokeStyle = fill; ctx.lineWidth = w; ctx.stroke(); }
+  function cell(x, y, r) { ctx.fillStyle = '#c8363c'; ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.7, 0, 0, 7); ctx.fill(); }
+  function draw() {
+    ctx.fillStyle = '#fdf6ee'; ctx.fillRect(0, 0, 560, 320);
+    ctx.strokeStyle = '#eadbc8'; ctx.lineWidth = 2; for (let y = 20; y < 320; y += 36) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(560, y + 6); ctx.stroke(); }
+    const pulse = 1 + 0.6 * Math.max(0, Math.sin(t * 6));
+    caps.forEach(c => tube(c, 9, '#d79aa0', '#fbe3e4'));
+    tube(A, 26, '#b03a44', '#f6d0d2'); tube(B, 32, '#c48a90', '#f8dcdd');
+    const LA = plen(A), LB = plen(B);
+    for (let i = 0; i < 26; i++) { const [x, y] = at(A, ((i / 26) * LA + t * 150 * pulse) % LA); cell(x, y + ((i * 7) % 3 - 1) * 6, 5); }
+    for (let i = 0; i < 26; i++) { const [x, y] = at(B, ((i / 26) * LB + t * 70) % LB); cell(x, y + ((i * 5) % 3 - 1) * 8, 5); }
+    caps.forEach((c, k) => { const L = plen(c); for (let i = 0; i < 5; i++) { const [x, y] = at(c, ((i / 5) * L + t * 22 + k * 13) % L); cell(x, y, 3.6); } });
+    ctx.font = 'bold 18px "Noto Sans TC","Microsoft JhengHei",sans-serif'; ctx.fillStyle = '#1f5c45';
+    [['A', 520, 46], ['B', 520, 290], ['C', 236, 170]].forEach(([s, x, y]) => { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y - 6, 14, 0, 7); ctx.fill(); ctx.fillStyle = '#1f5c45'; ctx.fillText(s, x - 6, y); });
+  }
+  function tick(ts) { if (!document.body.contains(el)) return; const dt = Math.min(0.05, (ts - last) / 1000); last = ts; if (playing) t += dt * +el.querySelector('[data-r="sp"]').value; draw(); raf = requestAnimationFrame(tick); }
+  el.querySelector('[data-a="play"]').onclick = e => { playing = !playing; e.target.textContent = playing ? '暫停' : '播放'; };
+  raf = requestAnimationFrame(tick);
+}
+const E3C_COLS = [{ label: '血球流動方向（描述）', ph: '例：從粗的分成細的…' }, { label: '流速', options: ['最快', '中等', '最慢', '不確定'] }, { label: '管徑', options: ['較粗', '中等', '只容一顆血球通過', '不確定'] }, { label: '有沒有一陣一陣的脈動', options: ['明顯', '不明顯', '不確定'] }, { label: '推論的血管種類', options: ['小動脈', '小靜脈', '微血管', '還不確定'] }], E3C_ROWS = ['A', 'B', 'C'];
+
+/* E4：血液氣體資料 */
+const GAS_DATA = [['肺動脈', 15, 52], ['肺靜脈', 20, 48], ['主動脈', 20, 48], ['上、下大靜脈', 15, 52]];
+const E4C_COLS = [{ label: '我判斷這裡是', options: ['充氧血', '缺氧血', '不確定'] }, { label: '血液剛經過哪裡的微血管？', ph: '例：肺部／身體組織' }], E4C_ROWS = GAS_DATA.map(r => r[0]);
+
+const CIRC_STATIONS = {
+  e1: {
+    no: 1, title: 'E1｜心臟裡的血往哪裡流？（豬心觀察）',
+    scenario: `<p>觀察豬心：從不同的開孔灌水，看水會從哪些開孔流出；再比較各腔室的大小與肌肉厚度，以及心臟旁兩種血管的管壁差異。</p><div style="max-width:420px">${svgImg(PIG_HEART_SVG, '心臟縱切面示意圖，四個腔室以甲乙丙丁標示，五個開孔以 1 到 5 標示（示意圖）')}</div><div class="safety">安全與衛生提醒：操作豬心請戴手套，剪刀小心使用，結束後清潔桌面並洗手。</div>`,
+    q1: '你預測從開孔灌水時，水會從哪裡流出？心臟中的血流有固定方向嗎？請說明理由。',
+    q2: '記錄灌水的結果，以及各腔室、血管的觀察。可對照上方示意圖的代號。',
+    w2(c, d) {
+      c.appendChild(h('<div style="font-weight:600;margin:6px 0">1. 灌水測試</div>')); recordTable(c, d, 'flow', [{ label: '從哪個開孔灌水', ph: '例：1' }, { label: '水從哪個開孔流出', ph: '' }, { label: '水經過哪些腔室（推論）', ph: '' }], ['第 1 次', '第 2 次', '第 3 次', '第 4 次'], { corner: '測試' });
+      c.appendChild(h('<div style="font-weight:600;margin:10px 0 6px">2. 腔室比較</div>')); recordTable(c, d, 'room', [{ label: '腔室大小', options: ['大', '中', '小'] }, { label: '肌肉厚度', options: ['最厚', '較厚', '較薄', '最薄'] }, { label: '我判斷它是', options: ['右心房', '左心房', '右心室', '左心室', '不確定'] }], ['甲', '乙', '丙', '丁'], { corner: '腔室' });
+      c.appendChild(h('<div style="font-weight:600;margin:10px 0 6px">3. 心臟旁的兩種血管</div>')); recordTable(c, d, 'vessel', [{ label: '管壁厚薄', options: ['厚', '薄'] }, { label: '管壁彈性', options: ['好', '差'] }, { label: '管徑', options: ['較大', '較小'] }, { label: '推論', options: ['動脈', '靜脈', '不確定'] }], ['血管 A', '血管 B'], { corner: '' });
+    },
+    q3: '水流的方向和腔室的厚薄，能支持你模型中的哪些路徑？還有什麼是這個觀察不能證明的？',
+    done2: d => hasTable(d, 'flow') || hasTable(d, 'room') || hasTable(d, 'vessel'),
+    report: d => tableReport(d, 'flow', [{ label: '灌水開孔' }, { label: '流出開孔' }, { label: '經過腔室' }], ['第 1 次', '第 2 次', '第 3 次', '第 4 次'], '測試') + tableReport(d, 'room', [{ label: '大小' }, { label: '肌肉厚度' }, { label: '判斷' }], ['甲', '乙', '丙', '丁'], '腔室') + tableReport(d, 'vessel', [{ label: '管壁厚薄' }, { label: '彈性' }, { label: '管徑' }, { label: '推論' }], ['血管 A', '血管 B'])
+  },
+  e2: {
+    no: 2, title: 'E2｜心音與脈搏：運動前後有什麼不同？',
+    scenario: `<p>兩人一組。受試者先靜坐休息 5 分鐘，用聽診器聽自己的心音，同時由夥伴用食指與中指按受試者手腕大拇指下方內側，計數 1 分鐘內的心搏與脈搏次數。接著原地跑步 3 分鐘，結束後立即再測一次，最後兩人互換角色。</p><div class="safety">安全提醒：使用聽診器時不可敲擊薄膜，以免損害聽力；身體不適者不要進行原地跑步。</div>`,
+    q1: '你預測同一個人每分鐘的心搏次數和脈搏次數會一樣嗎？運動後會怎麼變化？為什麼？',
+    q2: '記錄運動前、後的心搏與脈搏次數（正常人安靜時的心搏參考值約每分鐘 60～100 次）。',
+    w2(c, d) { recordTable(c, d, 'hr', E2C_COLS, E2C_ROWS, { corner: '時機' }); beatCounter(c, d); },
+    q3: '心搏和脈搏的資料，能說明心臟與血管之間有什麼關係？運動後的變化對物質運輸有什麼意義？',
+    done2: d => hasTable(d, 'hr'),
+    report: d => tableReport(d, 'hr', E2C_COLS, E2C_ROWS, '時機')
+  },
+  e3: {
+    no: 3, title: 'E3｜血液在血管中怎麼流動？（小魚尾鰭）',
+    scenario: `<p>將小魚放入裝少量水的夾鏈袋（或以溼棉花覆蓋魚身、露出尾鰭），用複式顯微鏡低倍率觀察尾鰭，比較不同血管中小顆粒流動的方向與速度。</p><div class="safety">請善待活體材料：動作輕柔，觀察時間不要太久，結束後盡速將小魚放回水箱。夾鏈袋外的水滴請先擦乾，以免汙染物鏡與載物臺。</div>`,
+    q1: '你預測血管中流動的小顆粒是什麼？不同的血管中，流動的方向和速度會一樣嗎？',
+    q2: '記錄你在顯微鏡（或下方模擬動畫）中看到的 A、B、C 三種血管。',
+    w2(c, d) { finSim(c, d); recordTable(c, d, 'fin', E3C_COLS, E3C_ROWS, { corner: '血管' }); },
+    q3: '你用哪些證據判斷血管的種類？這些證據對你模型中「動脈 → 微血管 → 靜脈」的方向有什麼幫助？',
+    done2: d => hasTable(d, 'fin'),
+    report: d => tableReport(d, 'fin', E3C_COLS, E3C_ROWS, '血管')
+  },
+  e4: {
+    no: 4, title: 'E4｜血液在哪裡改變了？（資料分析）',
+    scenario: `<p>下表是一般成人安靜時，不同血管中血液所含氧氣與二氧化碳的約略值（每 100 毫升血液中所含的氣體毫升數）。比較這些數值，推論血液在哪裡得到氧氣、在哪裡失去氧氣。</p>
+      <div class="tablewrap"><table class="data" style="max-width:520px"><thead><tr><th>血管</th><th>氧氣（mL／100 mL 血液）</th><th>二氧化碳（mL／100 mL 血液）</th></tr></thead><tbody>${GAS_DATA.map(([n, o, c]) => `<tr><th>${n}</th><td>約 ${o}</td><td>約 ${c}</td></tr>`).join('')}</tbody></table></div>
+      <p class="note">資料為生理學常用的約略值，個人與狀態不同會有差異。</p>`,
+    q1: '你預測哪些血管裡的血液含氧較多？氧氣與二氧化碳會在什麼地方進出血液？',
+    q2: '依據上表判斷各血管中的血液，並推論它剛經過哪裡的微血管。',
+    w2(c, d) { recordTable(c, d, 'gas', E4C_COLS, E4C_ROWS, { corner: '血管' }); },
+    q3: '這份資料支持你模型中物質交換的位置與方向嗎？「肺動脈」裡流的是什麼血？這對「動脈一定是充氧血」的說法有什麼挑戰？',
+    done2: d => hasTable(d, 'gas'),
+    report: d => tableReport(d, 'gas', E4C_COLS, E4C_ROWS, '血管')
+  }
+};
+
+const MODULE = {
+  id: 'circ', storagePrefix: 'simlab-circ-v1:', no: '03', en: 'CIRCULATION', title: '動物的循環', fileLabel: '動物的循環',
+  lead: '血液如何在人體內循環並進行物質交換？',
+  homeUrl: 'index.html',
+  types: {
+    oxy: { color: '#d63a3a', colorName: '紅', shape: 'circle', tool: '充氧血流向', short: '充氧血' },
+    deoxy: { color: '#2f5fd0', colorName: '藍', shape: 'square', tool: '缺氧血流向', short: '缺氧血' },
+    exch: { color: '#e08a1a', colorName: '橘', shape: 'diamond', tool: '物質交換方向', short: '物質交換（氧氣、養分、二氧化碳、廢物）' }
+  },
+  legendNote: '動畫忠實沿著你畫的路徑與方向移動，不會自動修正。',
+  needPathMsg: '請先畫出至少一條有長度的路徑（紅、藍或橘），才能播放或匯出動畫。',
+  comps: {
+    valve: { name: '瓣膜', color: '#8d3a3e', draw(ctx) {
+      ctx.strokeStyle = '#8d3a3e'; ctx.fillStyle = '#f2c9cb'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(-20, -10); ctx.quadraticCurveTo(-6, -4, -2, 12); ctx.lineTo(-20, 6); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(20, -10); ctx.quadraticCurveTo(6, -4, 2, 12); ctx.lineTo(20, 6); ctx.closePath(); ctx.fill(); ctx.stroke(); } },
+    rbc: { name: '紅血球', color: '#c8363c', draw(ctx) {
+      ctx.fillStyle = '#d8474d'; ctx.strokeStyle = '#8f2227'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(0, 0, 16, 11, 0, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#b8353a'; ctx.beginPath(); ctx.ellipse(0, 0, 7, 4.5, 0, 0, 7); ctx.fill(); } },
+    o2: { name: '氧氣', color: '#2b7bd6', draw(ctx) {
+      ctx.fillStyle = '#e3f0fd'; ctx.strokeStyle = '#2b7bd6'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 15, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#1d4f8f'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('O₂', 0, 5); } },
+    co2: { name: '二氧化碳', color: '#6b6b6b', draw(ctx) {
+      ctx.fillStyle = '#ececec'; ctx.strokeStyle = '#6b6b6b'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 16, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#333'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('CO₂', 0, 4); } },
+    food: { name: '養分', color: '#4f8a2e', draw(ctx) {
+      ctx.fillStyle = '#e7f4d8'; ctx.strokeStyle = '#4f8a2e'; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; ctx.lineTo(Math.cos(a) * 15, Math.sin(a) * 15); } ctx.closePath(); ctx.fill(); ctx.stroke(); } },
+    waste: { name: '廢物', color: '#8a6a2e', draw(ctx) {
+      ctx.fillStyle = '#f3e7c9'; ctx.strokeStyle = '#8a6a2e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.rect(-12, -12, 24, 24); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-6, -6); ctx.lineTo(6, 6); ctx.moveTo(6, -6); ctx.lineTo(-6, 6); ctx.stroke(); } }
+  },
+  scenarios: {
+    a: { name: '情境 A｜全身的血液循環', task: '感冒藥從嘴巴吞下，在小腸被吸收後，藥效卻能到達鼻子。沿著圖中的血管，畫出血液從心臟出發、流經全身再回到心臟的方向（充氧血用紅色、缺氧血用藍色），並在血液改變的地方放上氧氣、二氧化碳等元件。', svg: CIRC_BODY_SVG },
+    b: { name: '情境 B｜微血管與組織細胞', task: '放大看身體某處的組織。畫出血液在血管甲、微血管、血管乙中流動的方向，以及血液與組織細胞之間交換了哪些物質、往哪個方向。', svg: CIRC_TISSUE_SVG }
+  },
+  cmpTitle: '並排比較：全身循環與微血管', cmpShort: 'A、B 的關聯',
+  cmpPrompt: '情境 B 的物質交換發生在情境 A 的哪些地方？肺部的微血管和身體組織的微血管，交換的方向有什麼不同？',
+  notePlaceholder: '說明你畫的路徑：血液從哪裡出發、經過哪些構造、在哪裡交換了什麼、最後回到哪裡？',
+  modelInfo: {
+    m1: ['M1 個人初始模型', '先獨立表達你的想法，不用擔心與他人不同。兩個情境都要畫：用上方分頁切換情境 A 與情境 B，畫好後打開下方的「並排比較」。'],
+    m2: ['M2 小組修正模型', '與組員討論 E1～E4 的證據後，修正兩個情境的模型。這份模型儲存在此裝置，尚未與其他裝置共編。'],
+    m3: ['M3 個人最終模型', '請獨立建立兩個情境的最終解釋，並在說明中指出支持模型的證據。']
+  },
+  tags: ['心房與心室', '瓣膜', '動脈', '微血管', '靜脈', '血液的組成', '體循環', '肺循環', '物質交換', '心搏與脈搏'],
+  guides: [
+    '你的模型中，血液從心臟的哪個腔室出發？最後回到哪裡？',
+    '血液在哪裡由充氧血變成缺氧血？又在哪裡變回充氧血？',
+    '體循環和肺循環在哪裡交會？兩者是先後發生，還是同時進行？',
+    '灌水實驗中，水為什麼不能倒著流？這和你模型的哪個構造有關？',
+    '左心室的肌肉為什麼最厚？你的模型能說明嗎？',
+    '物質交換為什麼發生在微血管，而不是動脈或靜脈？',
+    '肺動脈裡流的是充氧血還是缺氧血？動脈和靜脈要怎麼區分才合理？',
+    '運動後心跳變快，對你模型中的物質交換有什麼影響？'
+  ],
+  pre: {
+    title: '吃下去的藥，怎麼跑到鼻子？',
+    intro: '<p>感冒鼻塞、流鼻水，醫生開了藥，要飯後吞服。藥是從嘴巴吞進肚子，藥效卻能作用到鼻子。另外，跑完步之後，我們會覺得心跳得很快。先記錄你注意到的現象，再寫下你現在的想法。</p>',
+    phenPlaceholder: '你注意到哪些現象？例如吃藥之後、運動之後，身體有哪些變化？',
+    qs: ['藥從嘴巴吞下後，為什麼藥效能作用到鼻子？請寫出藥物可能經過的構造與方向。', '血液從心臟出發後，會經過哪些地方再回到心臟？', '身體各處的細胞如何得到氧氣與養分，又如何送走二氧化碳和廢物？']
+  },
+  post: {
+    qs: ['藥從嘴巴吞下後，為什麼藥效能作用到鼻子？請寫出藥物經過的構造與方向。', '血液從左心室出發後，會經過哪些地方再回到左心室？', '身體各處的細胞如何得到氧氣與養分，又如何送走二氧化碳和廢物？', '情境預測：如果左心室和右心室之間的心壁有一個破洞，充氧血和缺氧血會發生什麼事？對身體可能有什麼影響？'],
+    reflection: '哪些證據改變了你的想法？你的模型從 M1 到 M3 哪裡改變最多？'
+  },
+  review: {
+    tpl: '我看得懂的部分：\n想請對方解釋的問題：\n給對方的建議：',
+    rubric: ['血液路徑形成一個封閉的循環，方向（箭頭）清楚', '體循環與肺循環都有畫出，並在心臟合理地交會', '充氧血與缺氧血的位置、以及轉變發生的地方合理', '物質交換的位置與方向，有 E1～E4 的證據支持'],
+    intro: '本機面對面互評：請與另一組交換裝置，觀看對方 M2 兩個情境的模型與動畫後填寫。此版本未提供跨裝置派送與回收。'
+  },
+  concept: {
+    items: ['心血管系統：心臟、血管、血液', '心臟的四個腔室與瓣膜', '心搏、脈搏與血壓', '動脈、微血管、靜脈的構造與功能', '血液的組成：血漿、紅血球、白血球、血小板', '體循環與肺循環', '微血管與組織細胞的物質交換'],
+    note: '動脈與靜脈是以「血液離開或流回心臟」來區分，不是以含氧多少區分：肺動脈內是缺氧血，肺靜脈內是充氧血。',
+    flow: [['5 分鐘｜提出問題', '從「吃藥為什麼能治鼻子」與運動後心跳加快，提出可探究的問題。'], ['8 分鐘｜初始模型', '畫出血液在全身流動與物質交換的路徑，保留最初想法。'], ['12 分鐘｜實驗與證據', '整合豬心觀察、心音脈搏、小魚尾鰭與血液氣體資料。'], ['10 分鐘｜模型修正', '比較證據與初始模型，說明修改的理由。'], ['7 分鐘｜解釋與論證', '以主張、證據與推理說明模型，進行小組互評。'], ['3 分鐘｜個人評量', '獨立反思哪些證據改變了你的想法。']],
+    previewNote: '底圖沒有預先繪製的血管與血流答案。'
+  },
+  stations: CIRC_STATIONS
+};
+
+/* ================= 共用引擎 ================= */
+/* =========================================================
+   儲存（瀏覽器本機）
+   ========================================================= */
+const PREFIX = MODULE.storagePrefix;
+const SCEN = MODULE.scenarios, SK = Object.keys(SCEN), TYPES = MODULE.types, COMP = MODULE.comps;
+const Store = {
+  mem: {},
+  get(k) { try { const v = localStorage.getItem(k); if (v != null) return JSON.parse(v); } catch (e) {} return this.mem[k] ?? null; },
+  set(k, v) { this.mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+};
+let ident = null, S = null, saveTimer = null;
+const idKey = i => PREFIX + [i.year, i.cls, i.no, i.name].join('|');
+const emptyScen = () => ({ strokes: [], note: '' });
+const blankDraft = () => { const d = { cmp: '' }; SK.forEach(k => d[k] = emptyScen()); return d; };
+function migrate(st) {
+  for (const k of ['m1', 'm2', 'm3']) {
+    const d = st.drafts[k];
+    if (!d || Array.isArray(d.strokes)) { const nd = blankDraft(); if (d && d.strokes) nd[SK[0]] = { strokes: d.strokes, note: d.note || '' }; st.drafts[k] = nd; }
+    else SK.forEach(s => d[s] = d[s] || emptyScen());
+  }
+  st.versions = (st.versions || []).map(v => {
+    if (!v[SK[0]] && v.strokes) { const nv = { ...v, cmp: '' }; SK.forEach(s => nv[s] = emptyScen()); nv[SK[0]] = { strokes: v.strokes, note: v.note || '' }; return nv; }
+    SK.forEach(s => v[s] = v[s] || emptyScen()); return v;
+  });
+  return st;
+}
+function blankState() {
+  const pre = { phen: '' }; MODULE.pre.qs.forEach((_, i) => pre['q' + (i + 1)] = '');
+  const post = { refl: '' }; MODULE.post.qs.forEach((_, i) => post['q' + (i + 1)] = '');
+  return { pre, drafts: { m1: blankDraft(), m2: blankDraft(), m3: blankDraft() }, versions: [], e: { e1: {}, e2: {}, e3: {}, e4: {} }, review: MODULE.review.tpl, post, guide: 0, updated: Date.now() };
+}
+/* 底圖 */
+const baseImgs = {};
+const baseListeners = [];
+for (const k of SK) { const im = new Image(); im.onload = () => baseListeners.forEach(f => { try { f(); } catch (e) {} }); im.src = SCEN[k].src || 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(SCEN[k].svg); baseImgs[k] = im; }
+const baseOk = k => baseImgs[k] && baseImgs[k].complete && baseImgs[k].naturalWidth > 0;
+function saveNow() { if (!ident) return; S.updated = Date.now(); Store.set(idKey(ident), S); const el = document.getElementById('savedFlag'); if (el) el.textContent = '已儲存在此瀏覽器 ' + new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+function save() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 350); }
+
+/* =========================================================
+   小工具
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 9);
+const clone = o => JSON.parse(JSON.stringify(o));
+function h(html) { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; }
+let dlNS = null;
+(async () => { try { if (window.claude && window.claude.use) dlNS = await window.claude.use('downloads'); } catch (e) {} })();
+function toast(m) { let t = document.getElementById('toast'); if (!t) { t = h('<div id="toast" style="position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1f2a24;color:#fff;padding:9px 16px;border-radius:10px;z-index:99;font-size:14px;max-width:90vw"></div>'); document.body.appendChild(t); } t.textContent = m; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', 4500); }
+async function download(name, blob) {
+  if (dlNS) {
+    try { await dlNS.save({ filename: name, data: blob }); toast('已下載：' + name); }
+    catch (e) { toast(e && e.code === 'declined' ? '已取消下載' : '無法下載（' + ((e && (e.message || e.code)) || '未知原因') + '）'); }
+    return;
+  }
+  const url = URL.createObjectURL(blob); const a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function bindText(el, obj, key) { el.value = obj[key] ?? ''; el.addEventListener('input', () => { obj[key] = el.value; save(); onDataChange(); }); }
+function fileBase() { return ident ? `${ident.cls}_${ident.no}_${ident.name}` : 'simlab'; }
+let onDataChange = () => {};
+
+/* =========================================================
+   繪製模型（共用 renderer）
+   ========================================================= */
+function polyLen(pts) { let L = 0; for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return L; }
+function pointAt(pts, d) {
+  for (let i = 1; i < pts.length; i++) {
+    const seg = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+    if (d <= seg || i === pts.length - 1) { const r = seg ? Math.min(1, d / seg) : 0; return [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * r, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * r]; }
+    d -= seg;
+  }
+  return pts[pts.length - 1];
+}
+function arrowHead(ctx, x1, y1, x2, y2, color, size = 16) {
+  const a = Math.atan2(y2 - y1, x2 - x1);
+  ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - size * Math.cos(a - 0.45), y2 - size * Math.sin(a - 0.45));
+  ctx.lineTo(x2 - size * Math.cos(a + 0.45), y2 - size * Math.sin(a + 0.45)); ctx.closePath(); ctx.fill();
+}
+function tailPoint(pts) { const L = polyLen(pts); return pointAt(pts, Math.max(0, L - 14)); }
+function drawComp(ctx, s) {
+  const c = COMP[s.kind]; if (!c) return;
+  ctx.save(); ctx.translate(s.x, s.y); ctx.lineWidth = 2.5; c.draw(ctx);
+  ctx.font = 'bold 13px "Noto Sans TC","Microsoft JhengHei",sans-serif'; ctx.textAlign = 'center';
+  ctx.lineWidth = 4; ctx.strokeStyle = '#fff'; ctx.strokeText(c.name, 0, c.labelY || 34); ctx.fillStyle = '#333'; ctx.fillText(c.name, 0, c.labelY || 34);
+  ctx.restore();
+}
+function drawStroke(ctx, s, selected) {
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (selected) { ctx.shadowColor = 'rgba(255,200,0,.95)'; ctx.shadowBlur = 12; }
+  if (s.type === 'comp') { drawComp(ctx, s); }
+  else if (s.type === 'text') {
+    ctx.font = 'bold 20px "Noto Sans TC","Microsoft JhengHei",sans-serif'; ctx.lineWidth = 5; ctx.strokeStyle = '#fff';
+    ctx.strokeText(s.text, s.x, s.y); ctx.fillStyle = '#1d1d1d'; ctx.fillText(s.text, s.x, s.y);
+  } else if (s.type === 'arrow') {
+    const [a, b] = [s.pts[0], s.pts[s.pts.length - 1]];
+    ctx.strokeStyle = '#222'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    arrowHead(ctx, a[0], a[1], b[0], b[1], '#222', 15);
+  } else {
+    const col = s.type === 'free' ? '#3a3a3a' : TYPES[s.type].color;
+    ctx.beginPath(); s.pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
+    if (s.type !== 'free') { ctx.strokeStyle = 'rgba(255,255,255,.92)'; ctx.lineWidth = 11; ctx.stroke(); }
+    ctx.strokeStyle = col; ctx.lineWidth = s.type === 'free' ? 3 : 6; ctx.globalAlpha = s.type === 'free' ? 1 : 0.9; ctx.stroke();
+    if (s.type !== 'free' && s.pts.length > 1) { ctx.globalAlpha = 1; const t = tailPoint(s.pts), e = s.pts[s.pts.length - 1]; arrowHead(ctx, t[0], t[1], e[0], e[1], col, 18); }
+  }
+  ctx.restore();
+}
+function animStrokes(strokes) { return strokes.filter(s => TYPES[s.type] && s.pts && s.pts.length > 1 && polyLen(s.pts) > 10); }
+function drawParticles(ctx, strokes, frame) {
+  const t = frame / FRAMES;
+  for (const s of animStrokes(strokes)) {
+    const L = polyLen(s.pts), n = Math.max(2, Math.floor(L / 70)), col = TYPES[s.type].color, shape = TYPES[s.type].shape;
+    for (let i = 0; i < n; i++) {
+      const [x, y] = pointAt(s.pts, ((i / n + t) % 1) * L);
+      ctx.save(); ctx.fillStyle = col; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.beginPath();
+      if (shape === 'circle') ctx.arc(x, y, 7, 0, 7);
+      else if (shape === 'diamond') { ctx.moveTo(x, y - 9); ctx.lineTo(x + 9, y); ctx.lineTo(x, y + 9); ctx.lineTo(x - 9, y); ctx.closePath(); }
+      else ctx.rect(x - 7, y - 7, 14, 14);
+      ctx.fill(); ctx.stroke(); ctx.restore();
+    }
+  }
+}
+function drawScene(ctx, strokes, frame, selId, base = 'a') {
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  if (baseOk(base)) ctx.drawImage(baseImgs[base], 0, 0, W, H);
+  for (const s of strokes) drawStroke(ctx, s, s.id === selId);
+  if (frame != null) drawParticles(ctx, strokes, frame);
+}
+/* panels: [{base, strokes, title}]；vertical=true 時上下排列（手機） */
+function drawPanels(ctx, panels, frame, vertical = false) {
+  panels.forEach((p, i) => {
+    ctx.save(); ctx.translate(vertical ? 0 : i * W, vertical ? i * H : 0);
+    ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+    drawScene(ctx, p.strokes, frame, null, p.base);
+    if (p.title && panels.length > 1) {
+      ctx.font = 'bold 22px "Noto Sans TC","Microsoft JhengHei",sans-serif'; const tw = ctx.measureText(p.title).width;
+      ctx.fillStyle = 'rgba(31,92,69,.92)'; ctx.fillRect(0, 0, tw + 28, 40); ctx.fillStyle = '#fff'; ctx.fillText(p.title, 14, 28);
+    }
+    ctx.restore();
+  });
+  ctx.fillStyle = '#ffffff';
+  for (let i = 1; i < panels.length; i++) { if (vertical) ctx.fillRect(0, i * H - 4, W, 8); else ctx.fillRect(i * W - 4, 0, 8, H); }
+}
+function panelSize(n, vertical) { return vertical ? [W, H * n] : [W * n, H]; }
+function renderPanels(panels, frame, hgt) {
+  const n = panels.length, w = Math.round(hgt * 4 / 3) * n;
+  const c = document.createElement('canvas'); c.width = w; c.height = hgt; const ctx = c.getContext('2d');
+  ctx.setTransform(hgt / H, 0, 0, hgt / H, 0, 0); drawPanels(ctx, panels, frame); return c;
+}
+function panelsToSVG(panels) {
+  const defs = Object.entries(TYPES).map(([k, v]) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="${v.color}"/></marker>`).join('') + '<marker id="ah-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#222"/></marker>';
+  const groups = panels.map((pn, i) => {
+    const sc = SCEN[pn.base];
+    const parts = [sc.src ? `<rect width="${W}" height="${H}" fill="#fff"/><image href="${sc.src}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="none"/>` : sc.svg.replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')];
+    for (const s of pn.strokes) {
+      if (s.type === 'text') parts.push(`<text x="${s.x}" y="${s.y}" font-size="20" font-weight="700" font-family="${SVG_FONT}" stroke="#fff" stroke-width="5" paint-order="stroke" fill="#1d1d1d">${esc(s.text)}</text>`);
+      else if (s.type === 'comp') {
+        const col = (COMP[s.kind] || {}).color || '#555';
+        parts.push(`<g transform="translate(${s.x},${s.y})"><circle r="12" fill="#fff" stroke="${col}" stroke-width="3"/><text y="${COMP[s.kind].labelY || 34}" text-anchor="middle" font-size="13" font-weight="700" font-family="${SVG_FONT}" fill="#333">${COMP[s.kind].name}</text></g>`);
+      } else if (s.type === 'arrow') {
+        const a = s.pts[0], b = s.pts[s.pts.length - 1];
+        parts.push(`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#222" stroke-width="3" marker-end="url(#ah-arrow)"/>`);
+      } else {
+        const col = s.type === 'free' ? '#3a3a3a' : TYPES[s.type].color;
+        const mk = TYPES[s.type] ? ` marker-end="url(#ah-${s.type})"` : '';
+        parts.push(`<polyline points="${s.pts.map(p => p.map(v => Math.round(v * 10) / 10).join(',')).join(' ')}" fill="none" stroke="${col}" stroke-width="${s.type === 'free' ? 3 : 6}" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="${s.type === 'free' ? 1 : .85}"${mk}/>`);
+      }
+    }
+    if (pn.title && panels.length > 1) parts.push(`<rect width="${pn.title.length * 22 + 28}" height="40" fill="#1f5c45" fill-opacity=".92"/><text x="14" y="28" font-size="22" font-weight="700" font-family="${SVG_FONT}" fill="#fff">${esc(pn.title)}</text>`);
+    return `<g transform="translate(${i * W},0)">${parts.join('\n')}</g>`;
+  });
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W * panels.length} ${H}" width="${W * panels.length}" height="${H}"><defs>${defs}</defs>${groups.join('\n')}</svg>`;
+}
+
+/* =========================================================
+   匯出：GIF 編碼、ZIP 打包、影片錄製
+   ========================================================= */
+function makePalette() { const p = new Uint8Array(768); let i = 0; for (let r = 0; r < 6; r++) for (let g = 0; g < 7; g++) for (let b = 0; b < 6; b++) { p[i++] = Math.round(r * 255 / 5); p[i++] = Math.round(g * 255 / 6); p[i++] = Math.round(b * 255 / 5); } return p; }
+function quantize(data) { const n = data.length / 4, out = new Uint8Array(n); for (let i = 0, j = 0; i < n; i++, j += 4) { out[i] = Math.round(data[j] * 5 / 255) * 42 + Math.round(data[j + 1] * 6 / 255) * 6 + Math.round(data[j + 2] * 5 / 255); } return out; }
+function lzw(indices, minSize = 8) {
+  const clear = 1 << minSize, eoi = clear + 1; let size = minSize + 1, next = eoi + 1; const dict = new Map();
+  const bytes = []; let buf = 0, nbits = 0;
+  const emit = c => { buf |= c << nbits; nbits += size; while (nbits >= 8) { bytes.push(buf & 255); buf >>>= 8; nbits -= 8; } };
+  emit(clear); let prefix = indices[0];
+  for (let i = 1; i < indices.length; i++) {
+    const k = indices[i], key = prefix * 256 + k, v = dict.get(key);
+    if (v !== undefined) { prefix = v; continue; }
+    emit(prefix);
+    if (next === 4096) { emit(clear); dict.clear(); next = eoi + 1; size = minSize + 1; }
+    else { if (next >= (1 << size)) size++; dict.set(key, next++); }
+    prefix = k;
+  }
+  emit(prefix); emit(eoi); if (nbits > 0) bytes.push(buf & 255);
+  return bytes;
+}
+function encodeGIF(w, hgt, frames, delayCs) {
+  const out = []; const w16 = v => out.push(v & 255, (v >> 8) & 255); const str = s => { for (const ch of s) out.push(ch.charCodeAt(0)); };
+  str('GIF89a'); w16(w); w16(hgt); out.push(0xF7, 0, 0); const pal = makePalette(); for (const b of pal) out.push(b);
+  out.push(0x21, 0xFF, 0x0B); str('NETSCAPE2.0'); out.push(3, 1, 0, 0, 0);
+  for (const f of frames) {
+    out.push(0x21, 0xF9, 4, 0); w16(delayCs); out.push(0, 0);
+    out.push(0x2C); w16(0); w16(0); w16(w); w16(hgt); out.push(0); out.push(8);
+    const data = lzw(f); for (let i = 0; i < data.length; i += 255) { const chunk = data.slice(i, i + 255); out.push(chunk.length); for (const b of chunk) out.push(b); }
+    out.push(0);
+  }
+  out.push(0x3B); return new Uint8Array(out);
+}
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(files) { // files: [{name, data:Uint8Array}] store only
+  const enc = new TextEncoder(); const chunks = []; const central = []; let offset = 0;
+  const u16 = v => [v & 255, (v >> 8) & 255], u32 = v => [v & 255, (v >> 8) & 255, (v >> 16) & 255, (v >>> 24) & 255];
+  for (const f of files) {
+    const nm = enc.encode(f.name), crc = crc32(f.data), sz = f.data.length;
+    const local = new Uint8Array([...u32(0x04034b50), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0), ...u32(crc), ...u32(sz), ...u32(sz), ...u16(nm.length), ...u16(0)]);
+    chunks.push(local, nm, f.data);
+    central.push(new Uint8Array([...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0), ...u32(crc), ...u32(sz), ...u32(sz), ...u16(nm.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(offset)]), nm);
+    offset += local.length + nm.length + sz;
+  }
+  const cdSize = central.reduce((a, c) => a + c.length, 0);
+  const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(cdSize), ...u32(offset), ...u16(0)]);
+  return new Blob([...chunks, ...central, end], { type: 'application/zip' });
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function exportAnimation(panels, fmt, res, label, status) {
+  const n = panels.length, hh = res === '1080' ? 1080 : 720, w = Math.round(hh * 4 / 3) * n;
+  const name = `${MODULE.fileLabel}模型_${label}_${fileBase()}`;
+  if (fmt === 'gif') {
+    const gh = 360, gw = 480 * n, frames = [];
+    for (let f = 0; f < FRAMES; f++) {
+      const c = renderPanels(panels, f, gh); frames.push(quantize(c.getContext('2d').getImageData(0, 0, gw, gh).data));
+      if (f % 10 === 0) { status(`正在產生 GIF… ${f}/${FRAMES}`); await sleep(0); }
+    }
+    status('正在壓縮 GIF…'); await sleep(0);
+    await download(name + '.gif', new Blob([encodeGIF(gw, gh, frames, 4)], { type: 'image/gif' })); status(`GIF 已產生（${gw}×${gh}，無限循環）`); return;
+  }
+  if (fmt === 'zip') {
+    const files = [];
+    for (let f = 0; f < FRAMES; f++) {
+      const c = renderPanels(panels, f, hh);
+      const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+      files.push({ name: `frame_${String(f + 1).padStart(3, '0')}.png`, data: new Uint8Array(await blob.arrayBuffer()) });
+      if (f % 10 === 0) status(`正在輸出影格… ${f}/${FRAMES}`);
+    }
+    await download(name + '_frames.zip', makeZip(files)); status('完整影格 ZIP 已產生（120 張 PNG）'); return;
+  }
+  if (typeof MediaRecorder === 'undefined' || !HTMLCanvasElement.prototype.captureStream) { status('此瀏覽器不支援錄製影片，請改用 GIF 或影格 ZIP。'); return; }
+  const cands = fmt === 'webm' ? ['video/webm;codecs=vp9', 'video/webm'] : ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'];
+  const mime = cands.find(m => MediaRecorder.isTypeSupported(m));
+  if (!mime) { status('此瀏覽器無可用的影片格式，請改用 GIF 或影格 ZIP。'); return; }
+  const c = document.createElement('canvas'); c.width = w; c.height = hh; const ctx = c.getContext('2d'); ctx.setTransform(hh / H, 0, 0, hh / H, 0, 0);
+  drawPanels(ctx, panels, 0);
+  const stream = c.captureStream(FPS); const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6e6 }); const parts = [];
+  rec.ondataavailable = e => e.data.size && parts.push(e.data);
+  const done = new Promise(r => rec.onstop = r);
+  rec.start();
+  const t0 = performance.now();
+  for (let f = 0; f < FRAMES; f++) {
+    drawPanels(ctx, panels, f);
+    if (f % 12 === 0) status(`正在錄製影片（約 5 秒）… ${f}/${FRAMES}`);
+    const target = t0 + (f + 1) * 1000 / FPS; await sleep(Math.max(0, target - performance.now()));
+  }
+  rec.stop(); await done;
+  const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+  await download(`${name}.${ext}`, new Blob(parts, { type: mime.split(';')[0] })); status(`影片已產生（${ext.toUpperCase()}，${w}×${hh}）`);
+}
+
+/* =========================================================
+   播放控制列（編輯器與預覽共用）；getPanels 回傳 [{base,strokes,title}]
+   ========================================================= */
+function playerControls(getPanels, redraw, label, opts = {}) {
+  const box = h(`<div>
+    <div class="ctrl">
+      <button data-a="play">播放動畫</button><button data-a="prev">上一格</button><button data-a="next">下一格</button>
+      <span data-r="flabel">影格 1/120 · 0.00 秒</span><input type="range" min="0" max="119" value="0" data-r="slider" aria-label="影格">
+      <label>倍速 <select data-r="speed"><option value="0.25">0.25 倍</option><option value="0.5">0.5 倍</option><option value="1" selected>1 倍</option><option value="2">2 倍</option></select></label>
+      <label><input type="checkbox" data-r="loop" checked> 循環播放</label>
+    </div>
+    <div class="exp"><div class="exptitle">匯出動畫與圖片</div>
+    <div class="ctrl">
+      <span class="note">動畫固定 5 秒 · 24 FPS · 120 格${opts.both ? ' · 兩個情境左右並排' : ''}</span>
+      <label>解析度 <select data-r="res"><option value="720">720p</option><option value="1080">1080p</option></select></label>
+      <label>格式 <select data-r="fmt"><option value="video">影片（MP4 優先／WebM 備援）</option><option value="webm">WebM 影片</option><option value="gif">GIF 無限循環</option><option value="zip">完整影格 ZIP</option></select></label>
+      <button data-a="export">一鍵匯出動畫</button><button data-a="svg">匯出 SVG</button><button data-a="png">匯出目前影格 PNG</button>
+    </div></div>
+    <div class="msg" data-r="msg"></div>
+    <div class="legend">${legendHTML()}</div>
+  </div>`);
+  const q = s => box.querySelector(`[data-r="${s}"]`), btn = a => box.querySelector(`[data-a="${a}"]`);
+  const st = { frame: 0, playing: false, raf: 0, last: 0 };
+  const status = m => q('msg').textContent = m;
+  const canPlay = () => getPanels().some(p => animStrokes(p.strokes).length > 0);
+  function update() {
+    const f = Math.floor(st.frame); q('flabel').textContent = `影格 ${f + 1}/120 · ${(f / FPS).toFixed(2)} 秒`; q('slider').value = f;
+    const can = canPlay();
+    ['play', 'prev', 'next', 'export'].forEach(a => btn(a).disabled = !can);
+    if (!can) { status(MODULE.needPathMsg); if (st.playing) stop(); }
+    else if (q('msg').textContent.startsWith('請先畫出')) status('');
+    redraw(st.playing || st.frame > 0 ? f : null);
+  }
+  function tick(ts) { if (!st.playing) return; if (!document.body.contains(box)) { stop(); return; } const dt = (ts - st.last) / 1000; st.last = ts; st.frame += dt * FPS * parseFloat(q('speed').value); if (st.frame >= FRAMES) { if (q('loop').checked) st.frame %= FRAMES; else { st.frame = FRAMES - 1; stop(); } } update(); st.raf = requestAnimationFrame(tick); }
+  function stop() { st.playing = false; cancelAnimationFrame(st.raf); btn('play').textContent = '播放動畫'; }
+  function reset() { stop(); st.frame = 0; update(); }
+  btn('play').onclick = () => { if (st.playing) { stop(); update(); return; } st.playing = true; btn('play').textContent = '暫停'; st.last = performance.now(); st.raf = requestAnimationFrame(tick); };
+  btn('prev').onclick = () => { stop(); st.frame = (Math.floor(st.frame) + FRAMES - 1) % FRAMES; update(); };
+  btn('next').onclick = () => { stop(); st.frame = (Math.floor(st.frame) + 1) % FRAMES; update(); };
+  q('slider').oninput = () => { stop(); st.frame = +q('slider').value; update(); };
+  btn('export').onclick = async () => { stop(); btn('export').disabled = true; try { await exportAnimation(getPanels(), q('fmt').value, q('res').value, label(), status); } catch (e) { status('匯出失敗：' + e.message); } btn('export').disabled = !canPlay(); };
+  btn('svg').onclick = async () => { await download(`${MODULE.fileLabel}模型_${label()}_${fileBase()}.svg`, new Blob([panelsToSVG(getPanels())], { type: 'image/svg+xml' })); };
+  btn('png').onclick = () => { const hh = q('res').value === '1080' ? 1080 : 720; const f = Math.floor(st.frame); renderPanels(getPanels(), st.playing || f > 0 ? f : null, hh).toBlob(b => download(`${MODULE.fileLabel}模型_${label()}_影格${f + 1}_${fileBase()}.png`, b)); };
+  return { el: box, update, stop, reset, status };
+}
+
+/* 唯讀預覽播放器：手機寬度時兩個情境上下排列 */
+function makePlayer(container, panels, label) {
+  const vertical = panels.length > 1 && (container.clientWidth || window.innerWidth) < 640;
+  const [cw, ch] = panelSize(panels.length, vertical);
+  const wrap = h(`<div><div class="miniwrap"><canvas class="view" width="${cw}" height="${ch}"></canvas></div></div>`);
+  container.appendChild(wrap);
+  const ctx = wrap.querySelector('canvas').getContext('2d');
+  const pc = playerControls(() => panels, f => drawPanels(ctx, panels, f, vertical), () => label, { both: panels.length > 1 });
+  wrap.appendChild(pc.el); pc.update(); baseListeners.push(() => pc.update());
+  return pc;
+}
+const versionPanels = v => SK.map(k => ({ base: k, strokes: v[k].strokes, title: SCEN[k].name }));
+const SHAPE_SYM = { circle: '●', diamond: '◆', square: '■' };
+function legendHTML() { return Object.values(TYPES).map(t => `${t.colorName} <b style="color:${t.color}">${SHAPE_SYM[t.shape]}</b> ${t.short}`).join('　') + '。' + MODULE.legendNote; }
+
+/* =========================================================
+   建模編輯器（情境 A／B 分頁 + 放大畫布 + 並排比較）
+   ========================================================= */
+function makeEditor(container, key, stageLabel) {
+  const draft = S.drafts[key];
+  let cur = SK[0];
+  const CLR = SK.length > 1 ? '清除此情境畫布' : '清除畫布', firstTool = Object.keys(TYPES)[0];
+  const root = h(`<div>
+    <div class="edwrap">
+      <div class="scentabs" role="tablist">
+        ${SK.length > 1 ? SK.map(k => `<button data-s="${k}" role="tab"></button>`).join('') : ''}
+        <button data-a="focus" class="focusbtn">⤢ 放大畫布</button>
+      </div>
+      <p class="task" data-r="task"></p>
+      <div class="toolbar" role="toolbar" aria-label="繪圖工具">
+        <button data-t="select">選取／移動</button><button data-t="free">自由繪圖</button>
+        ${Object.entries(TYPES).map(([k, t]) => `<button data-t="${k}" class="tool-path" style="border-left-color:${t.color}">${t.tool}</button>`).join('')}
+        <button data-t="arrow">箭頭</button><button data-t="text">文字標籤</button><button data-t="eraser">橡皮擦</button>
+        <button data-a="undo">↶ 復原</button><button data-a="redo">↷ 重做</button>
+      </div>
+      <div class="toolbar">
+        ${Object.entries(COMP).map(([k, c]) => `<button data-c="${k}">＋${c.btn || c.name}</button>`).join('')}
+        <input type="text" data-r="label" placeholder="文字標籤內容（選「文字標籤」後點畫布）" class="labelin">
+      </div>
+      <div class="canvaswrap"><canvas class="model" width="800" height="600" aria-label="${MODULE.title}建模畫布"></canvas></div>
+      <div data-r="pc"></div>
+    </div>
+    <label class="f" data-r="notelab"></label>
+    <textarea data-r="note" placeholder="${esc(MODULE.notePlaceholder)}"></textarea>
+    ${SK.length > 1 ? `<details class="card cmpcard" data-r="cmp"><summary><b>${MODULE.cmpTitle}</b> <span class="note">（都畫好後打開）</span></summary>
+      <div data-r="cmpview" style="margin-top:10px"></div>
+      <label class="f">${MODULE.cmpPrompt}</label>
+      <textarea data-r="cmptext"></textarea>
+    </details>` : ''}
+    <div class="row" style="margin-top:8px"><button class="primary" data-a="saveVer">保存 ${stageLabel} 獨立版本${SK.length > 1 ? `（${SK.map(k => k.toUpperCase()).join('、')} 一起）` : ''}</button><button data-a="clear">${CLR}</button><span data-r="vmsg" class="note"></span></div>
+    <p class="note">每次保存均新增快照，修改草稿不會覆蓋已保存的 ${stageLabel} 版本。</p>
+  </div>`);
+  container.appendChild(root);
+  const cv = root.querySelector('canvas.model'), ctx = cv.getContext('2d'), ed = root.querySelector('.edwrap');
+  const q = s => root.querySelector(`[data-r="${s}"]`);
+  let tool = firstTool, selId = null, drawing = null, drag = null, tol = 11;
+  const undo = {}, redo = {}; SK.forEach(k => { undo[k] = []; redo[k] = []; });
+  const strokes = () => draft[cur].strokes;
+  const snap = () => { undo[cur].push(JSON.stringify(strokes())); if (undo[cur].length > 80) undo[cur].shift(); redo[cur].length = 0; };
+  const pc = playerControls(() => [{ base: cur, strokes: strokes(), title: SCEN[cur].name }], f => drawScene(ctx, strokes(), f, selId, cur), () => SK.length > 1 ? `${stageLabel}_${cur.toUpperCase()}` : stageLabel);
+  q('pc').appendChild(pc.el);
+  const paint = () => pc.update();
+  const commit = () => { save(); paint(); tabs(); };
+  baseListeners.push(paint);
+  function tabs() {
+    root.querySelectorAll('[data-s]').forEach(b => { const k = b.dataset.s, n = draft[k].strokes.length; b.textContent = `${SCEN[k].name}（${n ? n + ' 筆' : '未畫'}）`; b.classList.toggle('on', k === cur); b.setAttribute('aria-selected', k === cur); });
+    q('task').textContent = SCEN[cur].task || ''; q('task').classList.toggle('hidden', !SCEN[cur].task);
+    q('notelab').textContent = SK.length > 1 ? `${SCEN[cur].name}的模型說明與修正理由` : '模型說明與修正理由';
+  }
+  function switchTo(k) { cur = k; selId = null; drawing = null; drag = null; q('note').value = draft[cur].note || ''; pc.reset(); tabs(); }
+  root.querySelectorAll('[data-s]').forEach(b => b.onclick = () => switchTo(b.dataset.s));
+  function setTool(t) { tool = t; root.querySelectorAll('[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === t)); cv.style.cursor = t === 'select' ? 'move' : t === 'eraser' ? 'not-allowed' : t === 'text' ? 'text' : 'crosshair'; if (t !== 'select') { selId = null; paint(); } }
+  root.querySelectorAll('[data-t]').forEach(b => b.onclick = () => setTool(b.dataset.t));
+  setTool(firstTool);
+  const fb = root.querySelector('[data-a="focus"]');
+  fb.onclick = () => { const on = !ed.classList.contains('focus'); ed.classList.toggle('focus', on); document.body.classList.toggle('noscroll', on); fb.textContent = on ? '✕ 結束放大' : '⤢ 放大畫布'; paint(); };
+  const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+  function segDist(p, a, b) { const dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy; let t = L ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); }
+  function hit(p) {
+    const arr = strokes();
+    for (let i = arr.length - 1; i >= 0; i--) {
+      const s = arr[i];
+      if (s.type === 'comp') { if (Math.abs(p[0] - s.x) < 30 + tol / 2 && Math.abs(p[1] - s.y) < 38 + tol / 2) return s; }
+      else if (s.type === 'text') { if (p[0] > s.x - tol && p[0] < s.x + s.text.length * 21 + tol && p[1] > s.y - 24 - tol / 2 && p[1] < s.y + 6 + tol / 2) return s; }
+      else { for (let j = 1; j < s.pts.length; j++) if (segDist(p, s.pts[j - 1], s.pts[j]) < tol) return s; }
+    }
+    return null;
+  }
+  cv.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+    tol = e.pointerType === 'touch' ? 22 : e.pointerType === 'pen' ? 14 : 11;
+    const p = pos(e); pc.stop();
+    if (tool === 'eraser') { const s = hit(p); if (s) { snap(); strokes().splice(strokes().indexOf(s), 1); commit(); } return; }
+    if (tool === 'select') { const s = hit(p); selId = s ? s.id : null; if (s) { snap(); drag = { s, last: p, moved: false }; } paint(); return; }
+    if (tool === 'text') { const txt = q('label').value.trim(); if (!txt) { pc.status('請先在上方輸入文字標籤內容，再點畫布放置。'); q('label').focus(); return; } snap(); strokes().push({ id: uid(), type: 'text', text: txt, x: p[0], y: p[1] }); commit(); return; }
+    drawing = { id: uid(), type: tool, pts: [p] }; strokes().push(drawing);
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!drawing && !drag) return;
+    e.preventDefault(); const p = pos(e);
+    if (drag) { const dx = p[0] - drag.last[0], dy = p[1] - drag.last[1]; drag.last = p; drag.moved = true; const s = drag.s; if (s.pts) s.pts.forEach(q => { q[0] += dx; q[1] += dy; }); else { s.x += dx; s.y += dy; } paint(); return; }
+    if (drawing.type === 'arrow') { drawing.pts[1] = p; }
+    else { const l = drawing.pts[drawing.pts.length - 1]; if (Math.hypot(p[0] - l[0], p[1] - l[1]) > 3) drawing.pts.push(p); }
+    paint();
+  });
+  const end = () => {
+    if (drag) { if (!drag.moved) undo[cur].pop(); else save(); drag = null; return; }
+    if (!drawing) return; const d = drawing; drawing = null; const arr = strokes();
+    arr.splice(arr.indexOf(d), 1);
+    if (d.pts.length < 2 || polyLen(d.pts) < 8) { paint(); return; }
+    snap(); d.pts = d.pts.map(p => [Math.round(p[0] * 10) / 10, Math.round(p[1] * 10) / 10]); arr.push(d); commit();
+  };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('touchmove', e => { if (drawing || drag) e.preventDefault(); }, { passive: false });
+  root.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { snap(); const s = { id: uid(), type: 'comp', kind: b.dataset.c, x: 640 + Math.random() * 60, y: 430 + Math.random() * 60 }; strokes().push(s); setTool('select'); selId = s.id; commit(); pc.status('已加入元件，請用「選取／移動」拖到你要的位置。'); });
+  root.querySelector('[data-a="undo"]').onclick = () => { if (!undo[cur].length) return; redo[cur].push(JSON.stringify(strokes())); draft[cur].strokes = JSON.parse(undo[cur].pop()); commit(); };
+  root.querySelector('[data-a="redo"]').onclick = () => { if (!redo[cur].length) return; undo[cur].push(JSON.stringify(strokes())); draft[cur].strokes = JSON.parse(redo[cur].pop()); commit(); };
+  const clr = root.querySelector('[data-a="clear"]'); let armed = 0;
+  clr.onclick = () => { if (Date.now() - armed < 3000) { snap(); draft[cur].strokes = []; armed = 0; clr.textContent = CLR; commit(); } else { armed = Date.now(); clr.textContent = '再按一次確認清除'; setTimeout(() => clr.textContent = CLR, 3000); } };
+  q('note').addEventListener('input', () => { draft[cur].note = q('note').value; save(); });
+  const cmp = q('cmp');
+  if (cmp) {
+    q('cmptext').value = draft.cmp || ''; q('cmptext').addEventListener('input', () => { draft.cmp = q('cmptext').value; save(); });
+    cmp.addEventListener('toggle', () => { const v = q('cmpview'); v.innerHTML = ''; if (cmp.open) makePlayer(v, SK.map(k => ({ base: k, strokes: draft[k].strokes, title: SCEN[k].name })), `${stageLabel}_並排`); });
+  }
+  root.querySelector('[data-a="saveVer"]').onclick = () => {
+    const n = S.versions.filter(v => v.stage === stageLabel).length + 1;
+    const v = { id: uid(), stage: stageLabel, label: `${stageLabel} 第 ${n} 版`, time: Date.now(), cmp: draft.cmp || '' }; SK.forEach(k => v[k] = clone(draft[k])); S.versions.push(v);
+    saveNow(); q('vmsg').textContent = `已保存「${stageLabel} 第 ${n} 版」（${new Date().toLocaleString('zh-TW')}）` + (SK.length > 1 && SK.some(k => !draft[k].strokes.length) ? '　提醒：有一個情境還沒畫。' : '');
+  };
+  window.addEventListener('keydown', function kh(e) {
+    if (!document.body.contains(root)) { window.removeEventListener('keydown', kh); return; }
+    if (e.key === 'Escape' && ed.classList.contains('focus')) { fb.click(); return; }
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); root.querySelector(e.shiftKey ? '[data-a="redo"]' : '[data-a="undo"]').click(); }
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selId) { const i = strokes().findIndex(s => s.id === selId); if (i >= 0) { snap(); strokes().splice(i, 1); selId = null; commit(); } }
+  });
+  switchTo(SK[0]);
+  return { root };
+}
+
+/* =========================================================
+   證據工作站完成度
+   ========================================================= */
+const EIDS = ['e1', 'e2', 'e3', 'e4'];
+const SUP = { support: '支持', challenge: '挑戰', partial: '部分支持與部分挑戰', none: '證據不足' };
+function stationSteps(id) {
+  const d = S.e[id], cfg = MODULE.stations[id];
+  return [!!((d.pred || '').trim() || (cfg.done1 && cfg.done1(d))), !!((d.obs || '').trim() || (cfg.done2 && cfg.done2(d))), !!(d.support && (d.reason || '').trim())];
+}
+const stationDone = id => stationSteps(id).every(Boolean);
+const scenNoteLabel = k => SK.length > 1 ? `${SCEN[k].name}說明` : '模型說明';
+
+/* =========================================================
+   各階段畫面
+   ========================================================= */
+function renderPre(c) {
+  const P = MODULE.pre;
+  c.appendChild(h(`<div>
+    <h2>${P.title}</h2>
+    <div>${P.intro}</div>
+    <label class="f">現象紀錄</label><textarea data-k="phen" placeholder="${esc(P.phenPlaceholder || '')}"></textarea>
+    <h3>前測：先寫下你現在的想法</h3>
+    ${P.qs.map((q, i) => `<label class="f">${i + 1}. ${q}</label><textarea data-k="q${i + 1}"></textarea>`).join('')}
+  </div>`));
+  c.querySelectorAll('[data-k]').forEach(t => bindText(t, S.pre, t.dataset.k));
+}
+function renderModel(c, key) {
+  const lab = key.toUpperCase();
+  const info = MODULE.modelInfo[key];
+  c.appendChild(h(`<div><h2>${info[0]}</h2><p class="lead">${info[1]}</p></div>`));
+  if (key === 'm2') c.appendChild(evidenceSummary());
+  if (key !== 'm1') {
+    const srcStage = key === 'm2' ? 'M1' : 'M2';
+    const src = [...S.versions].reverse().find(v => v.stage === srcStage);
+    if (src) {
+      const b = h(`<div class="row" style="margin:6px 0"><button>以「${esc(src.label)}」為起點複製到草稿</button><span class="note">會取代目前 ${lab} 草稿${SK.length > 1 ? '中所有情境' : ''}的圖</span></div>`);
+      b.querySelector('button').onclick = () => { SK.forEach(k => S.drafts[key][k] = clone(src[k])); S.drafts[key].cmp = src.cmp || ''; saveNow(); render(); };
+      c.appendChild(b);
+    }
+  }
+  makeEditor(c, key, lab);
+}
+function evidenceSummary() {
+  const el = h(`<div class="card" style="background:#fcfdfb"><h3 style="margin-top:0">E1～E4 證據連結</h3><p class="note">各站紀錄自動帶入；完成度只代表紀錄完整，不是科學評分。</p><div></div></div>`);
+  const box = el.lastElementChild;
+  for (const id of EIDS) {
+    const d = S.e[id], n = stationSteps(id).filter(Boolean).length;
+    box.appendChild(h(`<details style="margin:6px 0"><summary><b>${MODULE.stations[id].title}</b> · ${n}/3 步驟完成 · 對模型：${SUP[d.support] || '尚未判斷'}</summary>
+      <div class="note" style="padding:6px 0 0 12px">${(d.tags || []).map(t => `<span class="pill">${esc(t)}</span>`).join('') || ''}<br>連結理由：${esc(d.reason || '（尚未填寫）')}<br>修正想法：${esc(d.revise || '（尚未填寫）')}</div></details>`));
+  }
+  return el;
+}
+function renderStation(c, id) {
+  const cfg = MODULE.stations[id], d = S.e[id];
+  const doneAll = () => EIDS.filter(stationDone).length;
+  const head = h(`<div><div class="eyebrow">證據探究 · 工作站 ${cfg.no}/4</div><h2>${cfg.title}</h2>
+    <p class="note">情境圖片為示意圖，實驗結果請依實際觀察填寫，系統不會自動判定答案。</p>
+    <div class="row"><span class="status" data-r="st"></span><span class="note" data-r="all"></span></div>
+    <div class="card" style="margin-top:10px"><h3 style="margin-top:0">情境與探究問題</h3>${cfg.scenario}</div></div>`);
+  c.appendChild(head);
+  if (cfg.scenarioWidget) cfg.scenarioWidget(head.querySelector('.card'), d);
+  const mkStep = (n, title, q) => { const s = h(`<div class="step"><h3>STEP ${n}｜${title} <span class="status" data-s="${n}"></span></h3><p>${q}</p><div data-w></div></div>`); c.appendChild(s); return s; };
+  const s1 = mkStep(1, '預測', cfg.q1); if (cfg.w1) cfg.w1(s1.querySelector('[data-w]'), d);
+  s1.appendChild(h('<label class="f">我的預測與理由</label>')); const t1 = h('<textarea></textarea>'); s1.appendChild(t1); bindText(t1, d, 'pred');
+  const s2 = mkStep(2, '觀察與資料分析', cfg.q2); if (cfg.w2) cfg.w2(s2.querySelector('[data-w]'), d);
+  s2.appendChild(h('<label class="f">開放式觀察紀錄</label>')); const t2 = h('<textarea placeholder="記錄你實際看到的現象、數據、差異與實驗條件"></textarea>'); s2.appendChild(t2); bindText(t2, d, 'obs');
+  const s3 = mkStep(3, '證據與模型', cfg.q3);
+  const w3 = h(`<div>
+    <div style="font-weight:600">這項證據對我的模型想法</div>
+    <div class="row" data-r="sup">${Object.entries(SUP).map(([v, l]) => `<label><input type="radio" name="sup-${id}" value="${v}"> ${l}</label>`).join('')}</div>
+    <div style="font-weight:600;margin-top:10px">我覺得觀察到的證據可能跟下面項目有關係（可複選）</div>
+    <div class="row" data-r="tags">${MODULE.tags.map(t => `<label><input type="checkbox" value="${t}"> ${t}</label>`).join('')}</div>
+    <label class="f">證據與模型的連結理由</label><textarea data-k="reason" placeholder="（引導句：我認為……，因為觀察到……證據，所以我推論……）"></textarea>
+    <label class="f">我的修正想法（若暫不修正，請說明原因）</label><textarea data-k="revise"></textarea></div>`);
+  s3.querySelector('[data-w]').appendChild(w3);
+  w3.querySelectorAll('input[type=radio]').forEach(r => { r.checked = d.support === r.value; r.onchange = () => { d.support = r.value; save(); onDataChange(); }; });
+  d.tags = d.tags || [];
+  w3.querySelectorAll('[data-r="tags"] input').forEach(cb => { cb.checked = d.tags.includes(cb.value); cb.onchange = () => { d.tags = [...w3.querySelectorAll('[data-r="tags"] input:checked')].map(x => x.value); save(); onDataChange(); }; });
+  w3.querySelectorAll('[data-k]').forEach(t => bindText(t, d, t.dataset.k));
+  onDataChange = () => {
+    const st = stationSteps(id);
+    c.querySelectorAll('[data-s]').forEach(el => { const ok = st[+el.dataset.s - 1]; el.textContent = ok ? '已完成' : '尚待完成'; el.classList.toggle('done', ok); });
+    head.querySelector('[data-r="st"]').textContent = `${st.filter(Boolean).length}/3 步驟完成`;
+    head.querySelector('[data-r="all"]').textContent = `四站完成：${doneAll()}/4（依紀錄完整度，不代表得分）`;
+  };
+  onDataChange();
+}
+const LEVELS = ['做到了', '部分做到', '還沒做到'];
+function renderReview(c) {
+  const R = MODULE.review;
+  S.rubric = S.rubric || { group: '', items: {} };
+  const rb = S.rubric;
+  c.appendChild(h(`<div><h2>小組互評</h2><p class="lead">${R.intro}</p>
+  <div class="card"><h3 style="margin-top:0">互評規準</h3>
+    <div class="row" style="margin-bottom:8px"><label class="f" style="margin:0">被評組別</label><input type="text" data-r="grp" placeholder="例：第 3 組" style="max-width:200px"><span class="note" data-r="cnt"></span></div>
+    <div data-r="items"></div>
+  </div>
+  <label class="f">其他回饋與想請對方解釋的問題</label><textarea data-r="free" style="min-height:140px"></textarea></div>`));
+  const box = c.querySelector('[data-r="items"]'), cnt = c.querySelector('[data-r="cnt"]');
+  const count = () => { const n = R.rubric.filter((_, i) => rb.items[i] && rb.items[i].lv).length; cnt.textContent = `已評 ${n}/${R.rubric.length} 項`; };
+  R.rubric.forEach((txt, i) => {
+    rb.items[i] = rb.items[i] || { lv: '', why: '' };
+    const it = rb.items[i];
+    const el = h(`<div class="step" style="margin:8px 0"><div style="font-weight:600">${i + 1}. ${txt}</div>
+      <div class="row" style="margin:6px 0">${LEVELS.map(l => `<label><input type="radio" name="rb${i}" value="${l}"> ${l}</label>`).join('')}</div>
+      <input type="text" placeholder="理由：我看到對方的模型中…" data-r="why"></div>`);
+    el.querySelectorAll('input[type=radio]').forEach(r => { r.checked = it.lv === r.value; r.onchange = () => { it.lv = r.value; save(); count(); }; });
+    const w = el.querySelector('[data-r="why"]'); w.value = it.why; w.oninput = () => { it.why = w.value; save(); };
+    box.appendChild(el);
+  });
+  const g = c.querySelector('[data-r="grp"]'); g.value = rb.group; g.oninput = () => { rb.group = g.value; save(); };
+  const t = c.querySelector('[data-r="free"]'); t.value = S.review; t.oninput = () => { S.review = t.value; save(); };
+  count();
+}
+function rubricReport() {
+  const rb = S.rubric || { group: '', items: {} };
+  const rows = MODULE.review.rubric.map((txt, i) => { const it = rb.items[i] || {}; return `<tr><td style="text-align:left">${i + 1}. ${txt}</td><td>${esc(it.lv || '—')}</td><td style="text-align:left">${esc(it.why || '')}</td></tr>`; }).join('');
+  return `<p><b>被評組別：</b>${esc(rb.group || '—')}</p><table><tr><th>規準</th><th>評定</th><th>理由</th></tr>${rows}</table>`;
+}
+function renderPost(c) {
+  const P = MODULE.post;
+  c.appendChild(h(`<div><h2>後測與反思</h2>
+    <h3>後測</h3>
+    ${P.qs.map((q, i) => `<label class="f">${i + 1}. ${q}</label><textarea data-k="q${i + 1}"></textarea>`).join('')}
+    <h3>學習反思</h3>
+    <label class="f">${P.reflection}</label><textarea data-k="refl"></textarea>
+    <div class="row" style="margin-top:10px"><button class="primary" data-a="rep">一鍵匯出建模歷程</button><span class="note" data-r="m"></span></div></div>`));
+  c.querySelectorAll('[data-k]').forEach(t => bindText(t, S.post, t.dataset.k));
+  c.querySelector('[data-a="rep"]').onclick = () => exportReport(c.querySelector('[data-r="m"]'));
+}
+function versionNotes(v) {
+  const lines = SK.map(k => `<b>${scenNoteLabel(k)}：</b>${esc(v[k].note || '（無）')}`);
+  if (SK.length > 1) lines.push(`<b>${MODULE.cmpShort || '情境異同'}：</b>${esc(v.cmp || '（無）')}`);
+  return lines.join('\n');
+}
+function renderHistory(c) {
+  c.appendChild(h(`<div><h2>歷程比較</h2><div class="row"><button class="primary" data-a="rep">一鍵匯出建模歷程</button><span class="note" data-r="m"></span></div></div>`));
+  c.querySelector('[data-a="rep"]').onclick = () => exportReport(c.querySelector('[data-r="m"]'));
+  c.appendChild(evidenceSummary());
+  const box = h(`<div class="card"><h3 style="margin-top:0">模型版本比較</h3><p class="note">選擇最多兩個已保存的版本（例如 M1 與 M3），並排比較原始路徑及動畫${SK.length > 1 ? '；手機上會改為上下排列' : ''}。</p><div class="vlist"></div><div data-r="cmp" class="${SK.length > 1 ? '' : 'two'}" style="margin-top:12px"></div></div>`);
+  c.appendChild(box);
+  const list = box.querySelector('.vlist'), cmp = box.querySelector('[data-r="cmp"]');
+  if (!S.versions.length) { list.innerHTML = '<p class="note">尚無保存版本，請先至 M1、M2 或 M3 保存。</p>'; return; }
+  const chosen = [];
+  const draw = () => {
+    cmp.innerHTML = '';
+    chosen.forEach(id => {
+      const vv = S.versions.find(x => x.id === id);
+      const col = h(`<div class="card" style="background:#fcfdfb;margin:0 0 12px"><h3 style="margin-top:0">${esc(vv.label)} <span class="note">${new Date(vv.time).toLocaleString('zh-TW')}</span></h3></div>`); cmp.appendChild(col);
+      makePlayer(col, versionPanels(vv), vv.label);
+      col.appendChild(h(`<div class="note" style="white-space:pre-wrap;margin-top:8px">${versionNotes(vv)}</div>`));
+    });
+  };
+  S.versions.forEach(v => {
+    const row = h(`<label><input type="checkbox"> <b>${esc(v.label)}</b> <span class="note">${new Date(v.time).toLocaleString('zh-TW')} · ${SK.map(k => (SK.length > 1 ? k.toUpperCase() + ' ' : '') + v[k].strokes.length + ' 筆').join('、')}</span></label>`);
+    const cb = row.querySelector('input');
+    cb.onchange = () => {
+      if (cb.checked) { chosen.push(v.id); if (chosen.length > 2) { const drop = chosen.shift(); list.querySelectorAll('input').forEach((x, i) => { if (S.versions[i].id === drop) x.checked = false; }); } }
+      else chosen.splice(chosen.indexOf(v.id), 1);
+      draw();
+    };
+    list.appendChild(row);
+  });
+}
+
+/* =========================================================
+   匯出建模歷程（HTML 報告）
+   ========================================================= */
+function exportReport(msgEl) {
+  const sec = (t, b) => `<h2>${t}</h2>${b}`;
+  const p = (q, a) => `<p><b>${esc(q)}</b><br>${esc(a || '（未填寫）').replace(/\n/g, '<br>')}</p>`;
+  const vers = S.versions.map(v => `<div class="v"><h3>${esc(v.label)} <small>${new Date(v.time).toLocaleString('zh-TW')}</small></h3><img src="${renderPanels(versionPanels(v), null, 600).toDataURL('image/png')}" alt="${esc(v.label)}"><p style="white-space:pre-wrap">${versionNotes(v)}</p></div>`).join('') || '<p>（尚無保存版本）</p>';
+  const st = id => { const d = S.e[id], cfg = MODULE.stations[id]; let extra = ''; try { extra = cfg.report ? cfg.report(d) : ''; } catch (e) {}
+    return `<h3>${cfg.title}</h3>${p('預測與理由', d.pred)}${extra}${p('觀察紀錄', d.obs)}<p><b>對模型：</b>${SUP[d.support] || '未選'}　<b>相關項目：</b>${esc((d.tags || []).join('、') || '—')}</p>${p('連結理由', d.reason)}${p('修正想法', d.revise)}`; };
+  const strip = q => q.replace(/<[^>]+>/g, '');
+  const html = `<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>${MODULE.title}建模歷程｜${esc(fileBase())}</title><style>body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;max-width:900px;margin:30px auto;padding:0 16px;line-height:1.7;color:#222}h1{border-bottom:3px solid #1f5c45}h2{color:#1f5c45;margin-top:28px;border-bottom:1px solid #ddd}img{max-width:100%;border:1px solid #ccc;border-radius:8px}table{border-collapse:collapse;margin:6px 0}td,th{border:1px solid #ccc;padding:4px 8px;text-align:center}.v{page-break-inside:avoid;margin-bottom:20px}small{color:#777;font-weight:400}</style></head><body>
+  <h1>${MODULE.title}建模歷程</h1><p>${esc(ident.year)} 學年度 · ${esc(ident.cls)} 班 · ${esc(ident.no)} 號 · ${esc(ident.name)} · 第 ${esc(ident.group)} 組<br>匯出時間：${new Date().toLocaleString('zh-TW')}</p>
+  ${sec('現象與前測', p('現象紀錄', S.pre.phen) + MODULE.pre.qs.map((q, i) => p(`前測 ${i + 1}：${strip(q)}`, S.pre['q' + (i + 1)])).join(''))}
+  ${sec('模型版本（M1 → M2 → M3）', vers)}
+  ${sec('證據探究 E1～E4', EIDS.map(st).join(''))}
+  ${sec('小組互評', rubricReport() + `<p><b>其他回饋：</b><br>${esc(S.review).replace(/\n/g, '<br>')}</p>`)}
+  ${sec('後測與反思', MODULE.post.qs.map((q, i) => p(`後測 ${i + 1}：${strip(q)}`, S.post['q' + (i + 1)])).join('') + p('學習反思', S.post.refl))}
+  </body></html>`;
+  download(`${MODULE.fileLabel}建模歷程_${fileBase()}.html`, new Blob([html], { type: 'text/html' }));
+  if (msgEl) msgEl.textContent = '已產生 HTML 歷程檔，可用瀏覽器開啟後列印或另存 PDF。';
+}
+
+/* =========================================================
+   主畫面
+   ========================================================= */
+function conceptPanel(withPreview = true) {
+  const C = MODULE.concept;
+  const el = h(`<details class="card concept"><summary>${withPreview ? '教學概念、45 分鐘建議流程與目前模型預覽' : '教學概念與 45 分鐘建議流程'}</summary>
+    <h3>學習概念</h3>
+    <div>${C.items.map(x => `<span class="pill">${x}</span>`).join('')}</div>
+    ${C.note ? `<p class="note" style="margin-top:8px">${C.note}</p>` : ''}
+    <div class="flow">${C.flow.map(([t, d]) => `<div><b>${t}</b>${d}</div>`).join('')}</div>
+    ${withPreview ? `<h3>目前模型預覽</h3><p class="note">預覽最新保存版本（若無則為 M1 草稿）；${C.previewNote}</p><div data-r="pv"></div>` : ''}
+  </details>`);
+  let made = false;
+  if (withPreview) el.addEventListener('toggle', () => { if (el.open && !made) { made = true; const last = S.versions[S.versions.length - 1]; makePlayer(el.querySelector('[data-r="pv"]'), versionPanels(last || S.drafts.m1), last ? last.label : 'M1 草稿'); } });
+  return el;
+}
+function guideBox() {
+  const G = MODULE.guides;
+  const el = h(`<div class="card guide"><h3 style="margin-top:0">讓好問題帶你再想一步</h3><p data-r="q" style="font-size:17px"></p><button>換一個引導問題</button></div>`);
+  const q = el.querySelector('[data-r="q"]'); q.textContent = G[(S?.guide || 0) % G.length];
+  el.querySelector('button').onclick = () => { S.guide = ((S.guide || 0) + 1) % G.length; q.textContent = G[S.guide]; save(); };
+  return el;
+}
+const pageHead = () => `<div>${homeLink()}<div class="eyebrow">MODULE ${MODULE.no} / ${MODULE.en}</div><h1>${MODULE.title}</h1><p class="lead">${MODULE.lead}</p></div>`;
+function homeLink() { return (window.claude || !MODULE.homeUrl) ? '' : `<a class="homelink" href="${MODULE.homeUrl}">← 所有教學模組</a>`; }
+function renderIntro(app) {
+  const last = Store.get(PREFIX + 'last') || Store.get('simlab-last-ident') || {};
+  const el = h(`<div>${pageHead()}
+    <div class="notice">作答會即時保存在「這台裝置的這個瀏覽器」。此版本沒有連接 Google 課堂或教師後台；換裝置或清除瀏覽資料前，請用「匯出完整備份」保存。</div>
+    <div class="card"><h2>進入建模工作室</h2><p class="note">身分欄位只用於本機作業辨識，不是帳號驗證。</p>
+      <form><div class="grid5">
+        <div><label class="f">學年度</label><input type="text" name="year" required></div>
+        <div><label class="f">班級</label><input type="text" name="cls" required></div>
+        <div><label class="f">座號</label><input type="text" name="no" required></div>
+        <div><label class="f">姓名／測試代號</label><input type="text" name="name" required></div>
+        <div><label class="f">組別</label><input type="text" name="group" required></div>
+      </div><div class="row" style="margin-top:14px"><button class="primary big" type="submit">開始探究</button><input type="file" accept=".json" data-r="imp" style="display:none"><button type="button" data-a="imp">匯入備份檔</button></div></form>
+    </div></div>`);
+  app.appendChild(el); app.appendChild(conceptPanel(false));
+  const f = el.querySelector('form');
+  f.year.value = last.year || '115'; ['cls', 'no', 'name', 'group'].forEach(k => f[k].value = last[k] || '');
+  f.onsubmit = e => { e.preventDefault(); login({ year: f.year.value.trim(), cls: f.cls.value.trim(), no: f.no.value.trim(), name: f.name.value.trim(), group: f.group.value.trim() }); };
+  const imp = el.querySelector('[data-r="imp"]');
+  el.querySelector('[data-a="imp"]').onclick = () => imp.click();
+  imp.onchange = async () => { try { const j = JSON.parse(await imp.files[0].text()); if (!j.ident || !j.state) throw new Error('格式不符'); if (j.module && j.module !== MODULE.id) throw new Error('這是其他模組的備份檔'); Store.set(idKey(j.ident), j.state); login(j.ident); } catch (e) { alertMsg(el, '匯入失敗：' + e.message); } };
+}
+function alertMsg(el, m) { let n = el.querySelector('.msg.alert'); if (!n) { n = h('<p class="msg alert"></p>'); el.appendChild(n); } n.textContent = m; }
+function login(i) {
+  ident = i; Store.set(PREFIX + 'last', i); Store.set('simlab-last-ident', i);
+  const st = Store.get(idKey(i)); S = Object.assign(blankState(), st || {});
+  S.e = Object.assign({ e1: {}, e2: {}, e3: {}, e4: {} }, S.e); S.drafts = Object.assign(blankState().drafts, S.drafts); migrate(S);
+  saveNow(); if (!STAGES.some(x => '#' + x.id === location.hash)) location.hash = '#pre'; else render();
+}
+function render() {
+  const app = $('#app'); app.innerHTML = ''; onDataChange = () => {};
+  if (!ident) { renderIntro(app); return; }
+  const cur = (location.hash.replace('#', '') || 'pre'); const idx = Math.max(0, STAGES.findIndex(s => s.id === cur)); const stage = STAGES[idx];
+  app.appendChild(h(pageHead()));
+  const bar = h(`<div class="card idbar"><div><div class="idtag">${esc(ident.cls)}・${esc(ident.no)}・${esc(ident.name)}・第 ${esc(ident.group)} 組</div><div class="note">${esc(ident.year)} 學年度 <span class="saved" id="savedFlag">已儲存在此瀏覽器</span></div></div>
+    <div class="row"><button data-a="bk">匯出完整備份</button><button data-a="sw">切換身分</button></div></div>`);
+  bar.querySelector('[data-a="bk"]').onclick = () => { saveNow(); download(`${MODULE.fileLabel}備份_${fileBase()}.json`, new Blob([JSON.stringify({ app: 'simlab', module: MODULE.id, version: 2, ident, state: S }, null, 1)], { type: 'application/json' })); };
+  bar.querySelector('[data-a="sw"]').onclick = () => { saveNow(); ident = null; S = null; location.hash = ''; render(); };
+  app.appendChild(bar);
+  const nav = h('<nav class="stages" aria-label="探究階段"></nav>');
+  STAGES.forEach((s, i) => { const b = h(`<button>${s.tab}</button>`); if (i === idx) b.classList.add('on'); b.onclick = () => location.hash = '#' + s.id; nav.appendChild(b); });
+  app.appendChild(nav);
+  const card = h(`<div class="card"><div class="eyebrow">探究階段 ${idx + 1} / ${STAGES.length}</div><div data-r="body"></div>
+    <div class="pager"><button data-a="prev">上一階段</button><span class="note">輸入自動儲存；完成度不代表得分</span><button class="primary" data-a="next">下一階段</button></div></div>`);
+  app.appendChild(card);
+  const body = card.querySelector('[data-r="body"]');
+  ({ pre: renderPre, m1: c => renderModel(c, 'm1'), m2: c => renderModel(c, 'm2'), m3: c => renderModel(c, 'm3'), e1: c => renderStation(c, 'e1'), e2: c => renderStation(c, 'e2'), e3: c => renderStation(c, 'e3'), e4: c => renderStation(c, 'e4'), review: renderReview, post: renderPost, history: renderHistory })[stage.id](body);
+  const pv = card.querySelector('[data-a="prev"]'), nx = card.querySelector('[data-a="next"]');
+  pv.disabled = idx === 0; nx.disabled = idx === STAGES.length - 1;
+  pv.onclick = () => location.hash = '#' + STAGES[idx - 1].id; nx.onclick = () => location.hash = '#' + STAGES[idx + 1].id;
+  app.appendChild(conceptPanel()); app.appendChild(guideBox());
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', () => { if (ident) render(); });
+window.addEventListener('beforeunload', () => { if (ident) saveNow(); });
+(function init() { render(); })();
+
+</script>
+</body>
+</html>
